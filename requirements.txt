@@ -1,0 +1,13 @@
+Django
+python-dotenv
+mysqlclient
+djangorestframework
+djangorestframework-simplejwt
+selenium==4.16.0
+webdriver-manager==4.0.1
+pandas==2.1.4
+numpy==1.26.3
+openpyxl
+tqdm
+beautifulsoup4
+lxml
