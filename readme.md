@@ -1,4 +1,4 @@
-## Ebay Analytics Portal
+## Ebay Market Analysis
     
 ## Pre-Requisite:
 - python3
