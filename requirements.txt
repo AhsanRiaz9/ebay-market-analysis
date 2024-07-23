@@ -11,3 +11,4 @@ openpyxl
 tqdm
 beautifulsoup4
 lxml
+django-cors-headers

@@ -1,9 +1,10 @@
+import requests
 import time
-
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
+from settings.utilis.exceptions import NetworkException
 
 class SeleniumWebDriver:
     def __init__(self, headless=True):
@@ -52,3 +53,9 @@ def format_date(date_str):
     formated_date = f'{year}-{month_dict[month]}-{day}'
     return formated_date
 
+def check_internet_connection():
+    try:
+        time.sleep(2)
+        requests.get('https://www.google.com')
+    except Exception as e:
+        raise NetworkException('Connection is not established.')

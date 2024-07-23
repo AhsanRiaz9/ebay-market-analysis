@@ -1,12 +1,12 @@
 from django.db import models
 from product_configuration.models import ColorCategory, BrandCategory, Storage, Condition, ProductModelCategory, LockStatus, Category, Location
 
-class MobilePhones(models.Model):
+class MobilePhone(models.Model):
     title = models.CharField(max_length=255)
     sold_price = models.DecimalField(max_digits=10, decimal_places=2)
     shipping_fee = models.DecimalField(max_digits=10, decimal_places=2)
-    ebay_item_id = models.IntegerField()
-    product_url = models.TextField()
+    ebay_item_id = models.BigIntegerField()
+    product_url = models.CharField(unique=True, max_length=255)
     image = models.TextField()
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True)
     product_model = models.ForeignKey(ProductModelCategory, on_delete=models.SET_NULL, null=True)
@@ -17,8 +17,5 @@ class MobilePhones(models.Model):
     condition = models.ForeignKey(Condition, on_delete=models.SET_NULL, null=True)
     location = models.ForeignKey(Location, on_delete=models.SET_NULL, null=True)
     sold_date = models.DateField()
-    created_ad = models.DateTimeField(auto_now_add=True)
-    
-    class Meta:
-        unique_together = ('title', 'sold_date', 'product_url')
+    created_at = models.DateTimeField(auto_now_add=True)
 

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import MobilePhones
+from .models import MobilePhone
 
 # Register your models here.
-admin.site.register(MobilePhones)
+admin.site.register(MobilePhone)

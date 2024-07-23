@@ -44,10 +44,12 @@ INSTALLED_APPS = [
 CUSTOM_APPS = [
     'product_configuration',
     'ebay_products',
+    'scraping_scheduler',
 ]
 
 THIRD_PARTY_APPS = [
     'rest_framework',
+    'corsheaders'
 ]
 
 INSTALLED_APPS += CUSTOM_APPS + THIRD_PARTY_APPS
@@ -55,6 +57,8 @@ INSTALLED_APPS += CUSTOM_APPS + THIRD_PARTY_APPS
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.common.CommonMiddleware",
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -130,3 +134,8 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
 }
+
+ALLOWED_HOSTS = ['*']
+
+CORS_ALLOW_ALL_ORIGINS = True
+

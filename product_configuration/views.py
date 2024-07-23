@@ -183,7 +183,7 @@ class LoadProductConfiguration(APIView):
             }
             encoded_url = create_encoded_url(url, params)
             driver.get(encoded_url)
-            time.sleep(3)
+            time.sleep(5)
             items = driver.find_elements(By.CSS_SELECTOR, 'li.s-item')
             if len(items) != 0:
                 condition_categories_objects.append(ConditionCategory(condition=condition, category=category))                
