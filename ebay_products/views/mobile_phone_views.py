@@ -9,6 +9,4 @@ class MobilePhoneListView(ListAPIView):
     queryset = MobilePhone.objects.all().order_by('-created_at')
     pagination_class = CutstomPagination
     
-    
-    
 

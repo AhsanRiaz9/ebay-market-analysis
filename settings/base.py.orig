@@ -142,3 +142,5 @@ CORS_ALLOW_ALL_ORIGINS = True
 # Celery settings
 CELERY_broker_url = "redis://localhost:6379"
 result_backend = "redis://localhost:6379"
+
+CELERY_TIMEZONE = 'Asia/Karachi'

@@ -1,6 +1,6 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from settings.utilis.helpers import SeleniumWebDriver, create_encoded_url, format_date, check_internet_connection
+from settings.utilis.helpers import SeleniumWebDriver, create_encoded_url, format_date, check_internet_connection, create_internet_connection
 from product_configuration.models import ProductModel, BrandCategory, ColorCategory, Category, Storage, ProductModelCategory, Condition, ConditionCategory, LockStatus, Location, Brand, Color
 from ebay_products.models import MobilePhone
 import threading
@@ -18,12 +18,33 @@ from settings.utilis.exceptions import NetworkException
 # Create your views here.
 class DownloadProductView(APIView):
     def get(self, request, category_id, *args, **kwargs):
-        t = threading.Thread(target=self.download_data, args=[category_id,],daemon=True)
+        self.selenium_webdriver = None
+        t = threading.Thread(target=self.run_scraping_process, args=[category_id,],daemon=True)
         t.start()
         return Response({'message': f'Background job started to download product data of category {category_id}.'})
     
+    def run_scraping_process(self, category_id):
+        attempt = 0
+        while attempt <= 10:
+            if self.selenium_webdriver:
+                self.selenium_webdriver.close()
+            print('Starting scraping process.')
+            result = self.download_data(category_id)
+            status = result['status']
+            if status == True:
+                break
+            else:
+                internet_status = create_internet_connection()
+                if internet_status == True:
+                    attempt = 0
+                else:
+                    attempt += 1
+            print(result)
+                
     def download_data(self, category_id):
         try:
+            status = True
+            msg = 'Download product successfully'
             url = f'https://www.ebay.com.au/b/{category_id}/'
             category = Category.objects.filter(ebay_category_id=category_id).first()
             if not category:
@@ -42,11 +63,19 @@ class DownloadProductView(APIView):
             for mobile_process in mobile_processes:
                 check_internet_connection()
                 self.download_mobile_data(url, mobile_process, category)
+            mobile_proccesses = MobileScrapingProcess.objects.filter(scraping_process=scraping_process, is_completed=False)
+            if not mobile_proccesses:
+                scraping_process.is_completed = True
+                scraping_process.save()
+                print("Mobile scrapping process completed successfully.")
         except NetworkException as ne:
-            print('Download mobile process stopped due to', ne)
+            msg = 'Download mobile process stopped due to internet connection lost'
+            status = False
         except Exception as e:
-            print(e)
-        return Response({'message': 'Download product successfully.'})
+            msg = str(e)
+            status = False
+        result = {'message': msg, 'status': status}
+        return result
 
     def items_exists(self, encoded_url, attempt=0):
         driver = self.selenium_webdriver.driver
@@ -151,7 +180,10 @@ class DownloadProductView(APIView):
         if last_mobile_phone and last_mobile_phone in mobile_phones:
             last_mobile_phone_index = mobile_phones.index(last_mobile_phone)
             mobile_phones = mobile_phones[last_mobile_phone_index:]
+        total_mobiles = len(mobile_phones)
+        count = 0
         for mobile in tqdm(mobile_phones):
+            count += 1
             try:
                 mobile_process.mobile_model = mobile
                 mobile_process.save()
@@ -210,7 +242,11 @@ class DownloadProductView(APIView):
                 self.selenium_webdriver.close()
                 return
             except Exception as e:
-                continue            
+                continue  
+        if count == total_mobiles:
+            mobile_process.mobile_model = ''
+            mobile_process.is_completed = True
+            mobile_process.save()    
         self.selenium_webdriver.close()
     
     def visit_url(self, url):

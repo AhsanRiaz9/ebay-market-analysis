@@ -54,8 +54,32 @@ def format_date(date_str):
     return formated_date
 
 def check_internet_connection():
+    count = 0
+    for i in range(3):
+        try:
+            time.sleep(2)
+            requests.get('https://www.google.com')
+            return
+        except Exception as e:
+            count += 1
+            if count == 3:
+                raise NetworkException('Connection is not established.')
+
+def create_internet_connection():
+    attempt = 0
+    internet_status = False
+    while internet_status == False and attempt <= 30:
+        internet_status = is_internet_available()
+        if not internet_status:
+            attempt += 1
+    return internet_status
+            
+def is_internet_available():
     try:
         time.sleep(2)
         requests.get('https://www.google.com')
+        print('Internet connection established successfully.')
+        return True
     except Exception as e:
-        raise NetworkException('Connection is not established.')
+        print('Internet is not connected. Waiting for connection.')
+        return False
