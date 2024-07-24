@@ -39,3 +39,15 @@ http://127.0.0.1:8000/
 
 If you face issue related to mysqlclient installation package use this documentation
 https://pypi.org/project/mysqlclient/
+
+
+
+## Run Celery Worker:
+    python3 -m celery -A settings worker -B --loglevel=info -E
+
+
+### Instruction to integerate Celery
+    https://www.cherryservers.com/blog/how-to-install-and-start-using-rabbitmq-on-ubuntu-22-04
+    https://medium.com/django-unleashed/how-to-use-celery-with-django-c4c341997704
+    https://realpython.com/asynchronous-tasks-with-django-and-celery/
+
