@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from settings.utilis.helpers import SeleniumWebDriver, create_encoded_url
-from .models import Category, Brand, BrandCategory, Color, ColorCategory, LockStatus, Storage, ProductModel, ProductModelCategory, Condition, ConditionCategory, Filter, FilterCategory
+from .models import Category, Brand, BrandCategory, Color, ColorCategory, LockStatus, Storage, ProductModel, ProductModelCategory, Condition, ConditionCategory, Filter, FilterCategory, Location
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -15,6 +15,7 @@ from tqdm import tqdm
 
 # Create your views here.
 class LoadProductConfiguration(APIView):
+    
     def get(self, request, category_id, *args, **kwargs):
         t = threading.Thread(target=self.download_data, args=[category_id,],daemon=True)
         t.start()
@@ -215,3 +216,21 @@ class DownloadEbayCondtions(APIView):
             Condition.objects.bulk_create(condition_objects, ignore_conflicts=True, batch_size=500)
         except Exception as e:
             print(e)
+
+class DownloadEbayLocations(APIView):
+    
+    def get(self, request):
+        status = True
+        message = 'Location downloaded successfully!'
+        try:
+            df = pd.read_csv('product_configuration/locations.csv')
+            size = len(df)
+            location_objects = []
+            for i in range(size):
+                location_objects.append(Location(domain=df['domain'][i], country=df['country'][i]))
+            Location.objects.bulk_create(location_objects, ignore_conflicts=True, batch_size=500)
+        except Exception as e:
+            print(e)
+            status = False
+            message = 'Error while downoading location data.'
+        return Response({'message': message, 'status': status})
