@@ -1,6 +1,6 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from settings.utilis.helpers import SeleniumWebDriver, create_encoded_url, format_date, check_internet_connection, create_internet_connection
+from settings.utilis.helpers import SeleniumWebDriver, create_encoded_url, format_date, check_internet_connection, create_internet_connection, check_webdriver_close_exception
 from product_configuration.models import ProductModel, BrandCategory, ColorCategory, Category, Storage, ProductModelCategory, Condition, ConditionCategory, LockStatus, Location, Brand, Color
 from ebay_products.models import MobilePhone
 import threading
@@ -13,7 +13,8 @@ import time
 from bs4 import BeautifulSoup
 from selenium.common.exceptions import InvalidArgumentException
 from scraping_scheduler.models import ScrapingProcess, MobileScrapingProcess
-from settings.utilis.exceptions import NetworkException
+from settings.utilis.exceptions import NetworkException, WebDriverCloseException
+import os
 
 # Create your views here.
 class DownloadProductView(APIView):
@@ -29,22 +30,25 @@ class DownloadProductView(APIView):
             if self.selenium_webdriver:
                 self.selenium_webdriver.close()
             print('Starting scraping process.')
+            os.system('killall -9 chrome')
             result = self.download_data(category_id)
             status = result['status']
-            if status == True:
-                break
-            else:
-                internet_status = create_internet_connection()
-                if internet_status == True:
-                    attempt = 0
-                else:
-                    attempt += 1
+            error_type = result['error_type']
             print(result)
+            if status == False:
+                if error_type == 'internet_issue':
+                    create_internet_connection()
+                    attempt += 1
+                elif error_type == 'webdriver_close_issue':
+                    break
+            else:
+                break
                 
     def download_data(self, category_id):
         try:
             status = True
             msg = 'Download product successfully'
+            error_type = None
             url = f'https://www.ebay.com.au/b/{category_id}/'
             category = Category.objects.filter(ebay_category_id=category_id).first()
             if not category:
@@ -69,12 +73,17 @@ class DownloadProductView(APIView):
                 scraping_process.save()
                 print("Mobile scrapping process completed successfully.")
         except NetworkException as ne:
-            msg = 'Download mobile process stopped due to internet connection lost'
+            msg = 'Download mobile process stopped due to internet connection lost.'
             status = False
+            error_type = 'internet_issue'
+        except WebDriverCloseException as web_driver_exception:
+            msg = 'Download mobile process stopped due to web driver close.'
+            status = False
+            error_type = 'webdriver_close_issue'
         except Exception as e:
             msg = str(e)
             status = False
-        result = {'message': msg, 'status': status}
+        result = {'message': msg, 'status': status, 'error_type': error_type}
         return result
 
     def items_exists(self, encoded_url, attempt=0):
@@ -84,6 +93,7 @@ class DownloadProductView(APIView):
             items = driver.find_elements(By.CSS_SELECTOR, 'li.s-item')
             return len(items) > 0
         except Exception as e:
+            check_webdriver_close_exception(e)
             self.selenium_webdriver.close()
             self.selenium_webdriver = SeleniumWebDriver(headless=False)
             check_internet_connection()
@@ -120,6 +130,7 @@ class DownloadProductView(APIView):
             self._close_filters(driver)
             return filter_values
         except Exception as e:
+            check_webdriver_close_exception(e)
             if attempt == 0:
                 self.selenium_webdriver.close()
                 self.selenium_webdriver = SeleniumWebDriver(headless=False)
@@ -141,6 +152,7 @@ class DownloadProductView(APIView):
                 filter_all_btn[0].click()
                 return True
         except Exception as e:
+            check_webdriver_close_exception(e)
             print(e)
         return False
     
@@ -156,6 +168,7 @@ class DownloadProductView(APIView):
                 time.sleep(2)
                 return True
         except Exception as e:
+            check_webdriver_close_exception(e)
             print(e)
         return False
     
@@ -240,9 +253,12 @@ class DownloadProductView(APIView):
             except NetworkException as ne:
                 print('Scraping stopped due to =>', ne)
                 self.selenium_webdriver.close()
-                return
+                raise NetworkException('Internet not connected.')
+            except WebDriverCloseException as web_driver_close_exception:
+                self.selenium_webdriver.close()
+                raise WebDriverCloseException('WebDriver closed.')
             except Exception as e:
-                continue  
+                continue
         if count == total_mobiles:
             mobile_process.mobile_model = ''
             mobile_process.is_completed = True
@@ -270,6 +286,7 @@ class DownloadProductView(APIView):
             self.selenium_webdriver.driver.get(url)
         except Exception as e:
             print('Error occur in visit url, exception =>', e)
+            check_webdriver_close_exception(e)
         check_internet_connection()
          
     def scrap_data(self, url, params, filter_conditions, category):
@@ -379,6 +396,7 @@ class DownloadProductView(APIView):
                 product_model_category = ProductModelCategory(product_model=product_model, category=category)
             return product_model_category
         except Exception as e:
+            check_webdriver_close_exception(e)
             print('error occur in creating product model', e)
             return None
             

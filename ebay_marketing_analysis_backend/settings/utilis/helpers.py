@@ -4,7 +4,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
-from settings.utilis.exceptions import NetworkException
+from settings.utilis.exceptions import NetworkException, WebDriverCloseException
 
 class SeleniumWebDriver:
     def __init__(self, headless=True):
@@ -17,7 +17,7 @@ class SeleniumWebDriver:
         options.add_argument(f'user-agent={user_agent}')
         options.add_argument('--disable-dev-shm-usage')
         options.add_argument("--start-maximized")
-        return webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+        return webdriver.Chrome(options=options)
 
     @staticmethod
     def _configure_chrome_options(options, headless):
@@ -83,3 +83,7 @@ def is_internet_available():
     except Exception as e:
         print('Internet is not connected. Waiting for connection.')
         return False
+
+def check_webdriver_close_exception(e):
+    if 'no such window: target window already closed' in str(e):
+        raise WebDriverCloseException('Web driver closed. Scraping stopped.')
