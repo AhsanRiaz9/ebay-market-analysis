@@ -48,7 +48,7 @@ def mobile_phone_scraping_scheduler(category_id, new_process=False, first_proces
 def request_scraping(category_id):
     try:
         os.system('killall -9 chrome')
-        resp = requests.get(f'http://127.0.0.1:8000/ebay_products/download_products/{category_id}/')
+        resp = requests.get(f'http://127.0.0.1:8008/ebay_products/download_products/{category_id}/')
         print(resp)
     except Exception as e:
         print(f'Error occurred: {str(e)}')
