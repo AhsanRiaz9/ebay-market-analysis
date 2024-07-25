@@ -101,7 +101,7 @@ class DownloadProductView(APIView):
         except Exception as e:
             check_webdriver_close_exception(e)
             self.selenium_webdriver.close()
-            self.selenium_webdriver = SeleniumWebDriver(headless=False)
+            self.selenium_webdriver = SeleniumWebDriver(headless=True)
             check_internet_connection()
             self.selenium_webdriver.driver.get(encoded_url)
             time.sleep(3)
@@ -143,7 +143,7 @@ class DownloadProductView(APIView):
             check_webdriver_close_exception(e)
             if attempt == 0:
                 self.selenium_webdriver.close()
-                self.selenium_webdriver = SeleniumWebDriver(headless=False)
+                self.selenium_webdriver = SeleniumWebDriver(headless=True)
                 self.selenium_webdriver.driver.get(encoded_url)
                 check_internet_connection()
                 time.sleep(3)
@@ -192,7 +192,7 @@ class DownloadProductView(APIView):
     
     def download_mobile_data(self, url, mobile_process, category):
         check_internet_connection()
-        self.selenium_webdriver = SeleniumWebDriver(headless=False)
+        self.selenium_webdriver = SeleniumWebDriver(headless=True)
         self.visit_count = 0
         params = {
             'LH_Complete': 1, 
@@ -295,12 +295,12 @@ class DownloadProductView(APIView):
             error_msg = 'An error occurred while processing your request.'
             if self.visit_count%20==0 or error_msg in body_text:
                 self.selenium_webdriver.close()
-                self.selenium_webdriver = SeleniumWebDriver(headless=False)
+                self.selenium_webdriver = SeleniumWebDriver(headless=True)
                 self.selenium_webdriver.driver.get(url)
                 time.sleep(3)
         except InvalidArgumentException as e:
             self.selenium_webdriver.close()
-            self.selenium_webdriver = SeleniumWebDriver(headless=False)
+            self.selenium_webdriver = SeleniumWebDriver(headless=True)
             self.selenium_webdriver.driver.get(url)
         except WebDriverCloseException as e:
             raise WebDriverCloseException('Webdriver closed.')

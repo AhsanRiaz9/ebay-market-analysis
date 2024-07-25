@@ -23,7 +23,7 @@ class LoadProductConfiguration(APIView):
     
     def download_data(self, category_id):
         try:
-            selenium_webdriver = SeleniumWebDriver(headless=False)
+            selenium_webdriver = SeleniumWebDriver(headless=True)
             driver = selenium_webdriver.driver
             url = f'https://www.ebay.com.au/b/{category_id}/?LH_Complete=1&LH_Sold=1&rt=nc&LH_BIN=1&mag=1'
             driver.get(url)
@@ -201,7 +201,7 @@ class DownloadEbayCondtions(APIView):
     
     def download_data(self):
         try:  
-            selenium_webdriver = SeleniumWebDriver(headless=False)
+            selenium_webdriver = SeleniumWebDriver(headless=True)
             driver = selenium_webdriver.driver
             url = 'https://www.edp.ebay.com/devzone/finding/CallRef/Enums/conditionIdList.html'
             driver.get(url)
