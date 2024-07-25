@@ -20,6 +20,8 @@ import os
 class DownloadProductView(APIView):
     def get(self, request, category_id, *args, **kwargs):
         self.selenium_webdriver = None
+        os.system('killall -9 chrome')
+        time.sleep(2)
         t = threading.Thread(target=self.run_scraping_process, args=[category_id,],daemon=True)
         t.start()
         return Response({'message': f'Background job started to download product data of category {category_id}.'})
@@ -92,6 +94,10 @@ class DownloadProductView(APIView):
         try:
             items = driver.find_elements(By.CSS_SELECTOR, 'li.s-item')
             return len(items) > 0
+        except WebDriverCloseException as e:
+            raise WebDriverCloseException('Webdriver closed.')
+        except NetworkException as e:
+            raise NetworkException('Internet connection lost.')
         except Exception as e:
             check_webdriver_close_exception(e)
             self.selenium_webdriver.close()
@@ -129,6 +135,10 @@ class DownloadProductView(APIView):
                 print(filter_values)
             self._close_filters(driver)
             return filter_values
+        except WebDriverCloseException as e:
+            raise WebDriverCloseException('Webdriver closed.')
+        except NetworkException as e:
+            raise NetworkException('Internet closed')
         except Exception as e:
             check_webdriver_close_exception(e)
             if attempt == 0:
@@ -151,6 +161,10 @@ class DownloadProductView(APIView):
             if filter_all_btn:
                 filter_all_btn[0].click()
                 return True
+        except WebDriverCloseException as e:
+            raise WebDriverCloseException('Webdriver closed.')
+        except NetworkException as e:
+            raise NetworkException('Internet closed')
         except Exception as e:
             check_webdriver_close_exception(e)
             print(e)
@@ -167,6 +181,10 @@ class DownloadProductView(APIView):
                 overlay_close[0].click()
                 time.sleep(2)
                 return True
+        except WebDriverCloseException as e:
+            raise WebDriverCloseException('Webdriver closed.')
+        except NetworkException as e:
+            raise NetworkException('Internet closed')
         except Exception as e:
             check_webdriver_close_exception(e)
             print(e)
@@ -284,6 +302,10 @@ class DownloadProductView(APIView):
             self.selenium_webdriver.close()
             self.selenium_webdriver = SeleniumWebDriver(headless=False)
             self.selenium_webdriver.driver.get(url)
+        except WebDriverCloseException as e:
+            raise WebDriverCloseException('Webdriver closed.')
+        except NetworkException as e:
+            raise NetworkException('Internet closed')
         except Exception as e:
             print('Error occur in visit url, exception =>', e)
             check_webdriver_close_exception(e)
@@ -375,8 +397,10 @@ class DownloadProductView(APIView):
                     data_available = False
                 time.sleep(3)
                 print(mobile_phones_objects)
-            except NetworkException as ne:
-                raise NetworkException('Internet not available.')
+            except WebDriverCloseException as e:
+                raise WebDriverCloseException('Webdriver closed.')
+            except NetworkException as e:
+                raise NetworkException('Internet closed')
             except Exception as e:
                 print('error occur in scrap data =>',e)
                 data_available = False
@@ -396,7 +420,6 @@ class DownloadProductView(APIView):
                 product_model_category = ProductModelCategory(product_model=product_model, category=category)
             return product_model_category
         except Exception as e:
-            check_webdriver_close_exception(e)
             print('error occur in creating product model', e)
             return None
             

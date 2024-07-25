@@ -6,18 +6,23 @@ from datetime import timedelta
 from ebay_products.models import MobilePhone
 import os
 import requests
+import datetime
+from settings.utilis.slack_bot import generate_mobile_phone_scraping_report
 
 @shared_task
 def mobile_phone_scraping_scheduler(category_id, new_process=False, first_process=False):
     print('hitting mobile phone scheduler')
     category = Category.objects.filter(ebay_category_id=category_id).first()
+    today = str(datetime.datetime.now())[:10]
+    last_20_minutes = timezone.now() - timedelta(minutes=20)
+    total_mobile_phones = MobilePhone.objects.all()
+    today_scraped_phones = total_mobile_phones.filter(created_at__date=today)
+    last_20_minutes_scraped = total_mobile_phones.filter(created_at__gte=last_20_minutes)
     if first_process:
         request_scraping(category_id)
     else:
-        last_20_minutes = timezone.now() - timedelta(minutes=20)
-        mobile_phones = MobilePhone.objects.filter(created_at__gte=last_20_minutes)
-        if not mobile_phones:    
-            scraping_process = ScrapingProcess.objects.filter(category=category).first()
+        if not last_20_minutes_scraped: 
+            scraping_process = ScrapingProcess.objects.filter(category=category, is_completed=False).first()
             if scraping_process:    
                 if scraping_process.is_completed == True and new_process == True:
                     ScrapingProcess.objects.filter(category=category).update(is_complted=False)
@@ -27,6 +32,18 @@ def mobile_phone_scraping_scheduler(category_id, new_process=False, first_proces
                     request_scraping(category_id)
             else:
                 request_scraping(category_id)
+    scraping_process = ScrapingProcess.objects.filter(category=category, is_completed=False).first()
+    if scraping_process:
+        scraping_status = 'Completed' if scraping_process.is_completed else 'In Completed'
+        mobile_phone_scraping = MobileScrapingProcess.objects.filter(scraping_process=scraping_process).first()
+        if mobile_phone_scraping:
+            ebay_condition = mobile_phone_scraping.condition.ebay_condition_id
+            mobile_model = mobile_phone_scraping.mobile_model
+        else:
+            ebay_condition = ''
+            mobile_model = ''
+        generate_mobile_phone_scraping_report(category_id, ebay_condition, mobile_model, total_mobile_phones.count(), today_scraped_phones.count(), last_20_minutes_scraped.count(), scraping_status, 'ebay-marketing-analysis')
+
 
 def request_scraping(category_id):
     try:
