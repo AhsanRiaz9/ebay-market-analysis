@@ -11,7 +11,7 @@ SLACK_BOT_TOKEN = os.environ.get('SLACK_BOT_TOKEN')
 SLACK_BOT_ENABLED = True
 
 def send_message(channel_id, message_text):
-    if str(SLACK_BOT_ENABLED).strip().lower() == 'true':
+    if SLACK_BOT_ENABLED:
         client = WebClient(token=SLACK_BOT_TOKEN)
         try:
             response = client.chat_postMessage(
@@ -22,7 +22,7 @@ def send_message(channel_id, message_text):
             print(f"Got an error: {e.response['error']}")
 
 
-def generate_mobile_phone_scraping_report(ebay_category_id, current_condition, current_mobile_phones, total_scraped, today_scraped, last_20_minutes_scraped, scraping_status, channel_id='test'):
+def generate_mobile_phone_scraping_report(ebay_category_id, current_condition, current_mobile_phones, total_scraped, today_scraped, last_20_minutes_scraped, scraping_status):
     current_timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     report_message = f"""
     📱 *Mobile Phone Scraping Report* 📱
@@ -41,5 +41,5 @@ def generate_mobile_phone_scraping_report(ebay_category_id, current_condition, c
 
     Thank you for staying updated. Let's keep up the great work! 🚀
     """
-    send_message(channel_id, report_message)
+    send_message('ebay-marketing-analysis', report_message)
 

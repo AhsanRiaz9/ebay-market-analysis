@@ -16,7 +16,7 @@ def mobile_phone_scraping_scheduler(category_id, new_process=False, first_proces
     today = str(datetime.datetime.now())[:10]
     last_20_minutes = timezone.now() - timedelta(minutes=20)
     total_mobile_phones = MobilePhone.objects.all()
-    today_scraped_phones = total_mobile_phones.filter(created_at__date=today)
+    today_scraped_phones = total_mobile_phones.filter(created_at__gte=today)
     last_20_minutes_scraped = total_mobile_phones.filter(created_at__gte=last_20_minutes)
     if first_process:
         request_scraping(category_id)
@@ -42,7 +42,7 @@ def mobile_phone_scraping_scheduler(category_id, new_process=False, first_proces
         else:
             ebay_condition = ''
             mobile_model = ''
-        generate_mobile_phone_scraping_report(category_id, ebay_condition, mobile_model, total_mobile_phones.count(), today_scraped_phones.count(), last_20_minutes_scraped.count(), scraping_status, 'ebay-marketing-analysis')
+        generate_mobile_phone_scraping_report(category_id, ebay_condition, mobile_model, total_mobile_phones.count(), today_scraped_phones.count(), last_20_minutes_scraped.count(), scraping_status)
 
 
 def request_scraping(category_id):
