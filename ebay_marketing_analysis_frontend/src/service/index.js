@@ -94,7 +94,7 @@ else{
 }
 }
 
-export const callProducts = async(value = 1)=>{
+export const callProducts = async(value = 1, data=false)=>{
   const url = Urls.ebay_products
-  return await fetch(url+value,{method:'GET'}).then((response) => response.json())
+  return await fetch(url+value+'&'+ new URLSearchParams(data).toString(),{method:'GET'}).then((response) => response.json())
 }

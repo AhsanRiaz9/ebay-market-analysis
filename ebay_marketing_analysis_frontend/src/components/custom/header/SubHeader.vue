@@ -5,7 +5,7 @@
         <b-col md="12">
           <div class="d-flex justify-content-between align-items-center flex-wrap">
             <div>
-              <h1>Pricing Tool</h1>
+              <h1>Ebay Pricing Tool</h1>
             </div>
           </div>
         </b-col>

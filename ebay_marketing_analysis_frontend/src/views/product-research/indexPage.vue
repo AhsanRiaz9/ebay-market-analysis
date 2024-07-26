@@ -9,6 +9,8 @@
         <div class="section">
     <div class="d-flex justify-content-between"><div></div> <h6 class=" fw-semibold">Marketplace</h6><exclamation-circle-icon/></div>
       <v-select
+      v-model="data.name"
+      :on-change="callproductsApi()"
       class="selectinput"
       clearable
   label="Select Marketplace"
@@ -23,6 +25,7 @@
       <v-select
       class="selectinput"
       clearable
+      v-model="data.shippingLocation"
   label="Select Shipping location"
   :items="['Australia']"
   variant="underlined"
@@ -39,9 +42,8 @@
   :items="['Nothing to show here']"
   variant="underlined"
 ></v-select> -->
-<input type="text" name="date" class="form-control range_flatpicker" placeholder="Range Date Picker">
-<div class="bd-example">
-    <FlatPicker model="inlinedate" :config="{ mode: 'range', minDate: 'today', dateFormat: 'Y-m-d', inline: true }" name="date" placeholder="date range picker" class="form-control d-none"></FlatPicker>
+<div class="bd-example mt-3">
+    <FlatPicker  v-model="data.dateRange"  :config="{mode: 'range', minDate: 'today', dateFormat:'Y-m-d'}" name="date" placeholder="Select Range of Date" class="form-control border-0" style="border-bottom: 1px solid black;"></FlatPicker>
   </div>
       </div>
       </div>
@@ -53,7 +55,7 @@
               >
                 <div class="w-25">
                   <input
-                    
+                    v-model="data.Minprice"
                     type="number"
                     class="pricerangeinput"
                    
@@ -62,7 +64,7 @@
                 </div>
                 <div class="w-25">
                   <input
-                    
+                    v-model="data.Maxprice"
                     type="number"
                     class="pricerangeinput"
                     
@@ -88,10 +90,11 @@
         <div class="section">
     <div class="d-flex justify-content-between"><div></div> <h6 class="fw-semibold">Condition</h6><exclamation-circle-icon/></div>
       <v-select
+      v-model="data.condition"
       class="selectinput"
       clearable
   label="Condition"
-  :items="['Nothing to show here']"
+  :items="['Brand New', 'As New', 'Excellent', 'Good', 'Fair']"
   variant="underlined"
 ></v-select>
       </div>
@@ -395,11 +398,21 @@ import FlatPicker from 'vue-flatpickr-component'
     const results = ref('')
     const total = ref(0)
     const loading = ref(false)
-    // const data = ref({
+    const data = ref({
+      name: '',
+      shippingLocation:'',
+      dateRange:'',
+      maxPrice:'',
+      minPrice:'',
+      condition:'',
+      
 
-    // })
+    })
 
+ async function callproductsApi() {
+  await callProducts(1, data.value).then(data=> console.log(data))
 
+  }  
 
     onMounted( async() => {
       loading.value = true
@@ -522,7 +535,10 @@ import FlatPicker from 'vue-flatpickr-component'
         total,
         loading,
         rowsPerPage,
-        currentPage
+        currentPage,
+        data,
+        callproductsApi
+        
       }
 
   }
