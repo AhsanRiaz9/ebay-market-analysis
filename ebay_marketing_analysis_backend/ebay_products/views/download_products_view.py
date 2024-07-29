@@ -113,6 +113,14 @@ class DownloadProductView(APIView):
             else:
                 return False
     
+    def validate_filter_value(self, text):
+        excluded_values = ('Not Specified', 'All listings', 'Best Offer')
+        if text in excluded_values:
+            return False
+        if '(' in text or ')' in text:
+            return False
+        return True
+    
     def custom_tab_info(self, encoded_url, tab_name, attempt=0):
         driver = self.selenium_webdriver.driver
         check_internet_connection()
@@ -133,8 +141,7 @@ class DownloadProductView(APIView):
                 tab_info = driver.find_element(By.CSS_SELECTOR, 'div.x-overlay__wrapper--right')
                 tab_info = tab_info.get_attribute('innerHTML')
                 soup = BeautifulSoup(tab_info, features="lxml")
-                excluded_values = ('Not Specified', 'All listings', 'Best Offer')
-                filter_values = [label.text for label in soup.select('label.field__label > span') if label.text not in excluded_values and '(' not in label.text and ')' not in label.txt]
+                filter_values = [label.text for label in soup.select('label.field__label > span') if self.validate_filter_value(label.text)]
                 print(filter_values)
             self._close_filters(driver)
             return filter_values

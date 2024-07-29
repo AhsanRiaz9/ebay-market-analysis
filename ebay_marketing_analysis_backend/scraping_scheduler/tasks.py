@@ -22,7 +22,7 @@ def mobile_phone_scraping_scheduler(category_id, new_process=False, first_proces
         request_scraping(category_id)
     else:
         if not last_20_minutes_scraped: 
-            scraping_process = ScrapingProcess.objects.filter(category=category, is_completed=False).first()
+            scraping_process = ScrapingProcess.objects.filter(category=category).first()
             if scraping_process:    
                 if scraping_process.is_completed == True and new_process == True:
                     ScrapingProcess.objects.filter(category=category).update(is_complted=False)
