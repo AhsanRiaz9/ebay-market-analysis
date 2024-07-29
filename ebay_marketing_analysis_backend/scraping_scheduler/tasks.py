@@ -32,7 +32,7 @@ def mobile_phone_scraping_scheduler(category_id, new_process=False, first_proces
                     request_scraping(category_id)
             else:
                 request_scraping(category_id)
-    scraping_process = ScrapingProcess.objects.filter(category=category, is_completed=False).first()
+    scraping_process = ScrapingProcess.objects.filter(category=category).first()
     if scraping_process:
         scraping_status = 'Completed' if scraping_process.is_completed else 'In Completed'
         mobile_phone_scraping = MobileScrapingProcess.objects.filter(scraping_process=scraping_process, is_completed=False).first()
