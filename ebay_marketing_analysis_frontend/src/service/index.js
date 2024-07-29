@@ -83,7 +83,6 @@ export const updaterolepermissions = async (id, data) => {
   const Token = getUserauth()
   return await fetch(url + id + '/', { method: 'PUT', headers: { 'Content-Type': 'Application/json', Authorization: 'Bearer ' + Token }, body: JSON.stringify(data) }).then((response) => response.json())
 }
-
 export const checkRoute = async (permissions, name, permission) => {
 if(permissions){
   const result = permissions?.permissions[name]?.some((i) => i.name == permission)
@@ -93,8 +92,18 @@ else{
   return false
 }
 }
-
 export const callProducts = async(value = 1, data=false)=>{
-  const url = Urls.ebay_products
-  return await fetch(url+value+'&'+ new URLSearchParams(data).toString(),{method:'GET'}).then((response) => response.json())
+const url = Urls.ebay_products
+return await fetch(url+value+'&'+ new URLSearchParams(data).toString(),{method:'GET'}).then((response) => response.json())
 }
+
+
+
+// try{
+//   let dataCopy = {...data.value} || false
+// for(let x in dataCopy){
+// if(dataCopy[x] == null){
+// dataCopy[x] = ''
+// }
+
+// function to perform conversion of null to empty string

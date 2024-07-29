@@ -10,11 +10,11 @@
     <div class="d-flex justify-content-between"><div></div> <h6 class=" fw-semibold">Marketplace</h6><exclamation-circle-icon/></div>
       <v-select
       v-model="data.name"
-      :on-change="callproductsApi()"
-      class="selectinput"
       clearable
+      class="selectinput"
   label="Select Marketplace"
   :items="['ebay.com.au']"
+    @update:modelValue="callproductsApi"
   variant="underlined"
 ></v-select>
       </div>
@@ -23,12 +23,13 @@
         <div class="section">
     <div class="d-flex justify-content-between"><div></div> <h6 class="fw-semibold">Shipping location</h6><exclamation-circle-icon/></div>
       <v-select
-      class="selectinput"
       clearable
+      class="selectinput"
       v-model="data.shippingLocation"
   label="Select Shipping location"
   :items="['Australia']"
   variant="underlined"
+  @update:modelValue="callproductsApi"
 ></v-select>
       </div>
       </div>
@@ -43,7 +44,7 @@
   variant="underlined"
 ></v-select> -->
 <div class="bd-example mt-3">
-    <FlatPicker  v-model="data.dateRange"  :config="{mode: 'range', minDate: 'today', dateFormat:'Y-m-d'}" name="date" placeholder="Select Range of Date" class="form-control border-0" style="border-bottom: 1px solid black;"></FlatPicker>
+    <FlatPicker @change="callproductsApi"  v-model="data.dateRange"  :config="{mode: 'range', dateFormat:'Y-m-d'}" name="date" placeholder="Select Range of Date" class="form-control border-0" style="border-bottom: 1px solid black; font-weight: 700;"></FlatPicker>
   </div>
       </div>
       </div>
@@ -51,20 +52,22 @@
         <div class="section">
     <div class="d-flex justify-content-between"><div></div> <h6 class="fw-semibold">Price</h6><exclamation-circle-icon/></div>
     <div
-                class="mt-auto d-flex justify-content-around align-items-center px-4 pb-3"
+                class="mt-auto gap-2 d-flex justify-content-around align-items-center px-4 pb-3"
               >
-                <div class="w-25">
+                <div class="w-50">
                   <input
-                    v-model="data.Minprice"
+                   @change="checkPrice"
+                    v-model="data.minPrice"
                     type="number"
                     class="pricerangeinput"
                    
                   />
                   <b class="text-center mx-auto d-block">MIN</b>
                 </div>
-                <div class="w-25">
+                <div class="w-50">
                   <input
-                    v-model="data.Maxprice"
+                  @change="checkPrice"
+                    v-model="data.maxPrice"
                     type="number"
                     class="pricerangeinput"
                     
@@ -91,6 +94,7 @@
     <div class="d-flex justify-content-between"><div></div> <h6 class="fw-semibold">Condition</h6><exclamation-circle-icon/></div>
       <v-select
       v-model="data.condition"
+      @update:modelValue="callproductsApi"
       class="selectinput"
       clearable
   label="Condition"
@@ -98,8 +102,9 @@
   variant="underlined"
 ></v-select>
       </div>
-      </div></div>
-   <div class="py-3" style="background-color: white;">
+    </div>
+      <div class="py-3" style="background-color: white;">
+        <div class=" fw-bold">Total count : {{ records }} items </div>
   <KTDatatable
     :enable-items-per-page-dropdown="false"
     :table-data="results ? results : []"
@@ -124,6 +129,7 @@
    </div>
 
     </div>
+  </div>
   </template>
 
   <!-- <script>
@@ -388,6 +394,7 @@ import { onMounted, ref } from 'vue';
 import SearchIcon from '@/components/icons/outlined/svg-icons/SearchIcon.vue';
 import { callProducts } from '@/service';
 import FlatPicker from 'vue-flatpickr-component'
+import { toast } from 'vue3-toastify';
   export default {
 
   components: {ExclamationCircleIcon,KTDatatable,SearchIcon,FlatPicker},
@@ -397,22 +404,57 @@ import FlatPicker from 'vue-flatpickr-component'
     const rowsPerPage = ref(10);
     const results = ref('')
     const total = ref(0)
+    const records = ref(0)
     const loading = ref(false)
     const data = ref({
-      name: '',
-      shippingLocation:'',
-      dateRange:'',
+      name:null,
+      shippingLocation:null,
+      dateRange: null,
       maxPrice:'',
       minPrice:'',
-      condition:'',
+      condition: null,
       
 
     })
 
+let timeout;
  async function callproductsApi() {
-  await callProducts(1, data.value).then(data=> console.log(data))
+  clearTimeout(timeout)
+  timeout = setTimeout(async()=> {
+    try{
+      let dataCopy = {...data.value} || false
+  for(let x in dataCopy){
+    if(dataCopy[x] == null){
+    dataCopy[x] = ''
+  }
+  }
+      await callProducts(1, dataCopy).then(data=>{
+      results.value = data.results
+          total.value = data.total_pages
+          records.value = data.total_records
+          loading.value = false
+  }); 
+    }
+    catch (err){
+      console.log(err)
+    }
+  },1500)
 
   }  
+
+  function checkPrice () {
+    
+    if(data.value.maxPrice || data.value.minPrice)
+    {
+      if(data.value.maxPrice < 0 || data.value.minPrice < 0)
+      {
+        toast.error('Min/Max price should be greater or equal to zero',{autoClose:3000})
+      }
+     else{
+      callproductsApi()
+     } 
+    }
+  }
 
     onMounted( async() => {
       loading.value = true
@@ -420,8 +462,7 @@ import FlatPicker from 'vue-flatpickr-component'
         await callProducts().then(data=> {
           results.value = data.results
           total.value = data.total_pages
-
-          console.log(total.value) 
+          records.value = data.total_records
           loading.value = false
         })
       }
@@ -537,7 +578,9 @@ import FlatPicker from 'vue-flatpickr-component'
         rowsPerPage,
         currentPage,
         data,
-        callproductsApi
+        callproductsApi,
+        records,
+        checkPrice
         
       }
 
