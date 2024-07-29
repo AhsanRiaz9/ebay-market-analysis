@@ -19,9 +19,10 @@ class MobilePhoneListView(ListAPIView):
         if date_range:
             date_range = date_range.split(' to ')
             start_date = date_range[0]
-            end_date = date_range[1]
             queryset = queryset.filter(sold_date__gte=start_date)
-            queryset = queryset.filter(sold_date__lte=end_date)
+            if len(date_range) == 2:
+                end_date = date_range[1]
+                queryset = queryset.filter(sold_date__lte=end_date)
         min_price = params.get('minPrice','')
         max_price = params.get('maxPrice','')
         if min_price:
