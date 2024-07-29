@@ -74,6 +74,7 @@ class LoadProductConfiguration(APIView):
         return False
 
     def custom_tab_info(self, driver, tab_name):
+        filter_values = []
         self._open_filters(driver)
         WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, 'div[role="tab"]'))
@@ -82,15 +83,16 @@ class LoadProductConfiguration(APIView):
         custom_tab = [tab for tab in filter_tabs if tab.text==tab_name]
         if custom_tab:
             custom_tab[0].click()
-        time.sleep(3)
-        WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, 'div.x-overlay__wrapper--right'))
-        )
-        tab_info = driver.find_element(By.CSS_SELECTOR, 'div.x-overlay__wrapper--right')
-        tab_info = tab_info.get_attribute('innerHTML')
-        soup = BeautifulSoup(tab_info)
-        filter_values = [label.text for label in soup.select('label.field__label > span') if label.text != 'Not Specified']
-        print(filter_values)
+            time.sleep(3)
+            WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, 'div.x-overlay__wrapper--right'))
+            )
+            tab_info = driver.find_element(By.CSS_SELECTOR, 'div.x-overlay__wrapper--right')
+            tab_info = tab_info.get_attribute('innerHTML')
+            soup = BeautifulSoup(tab_info, features="lxml")
+            excluded_values = ('Not Specified', 'All listings', 'Best Offer')
+            filter_values = [label.text for label in soup.select('label.field__label > span') if label.text not in excluded_values and '(' not in label.text and ')' not in label.txt]
+            print(filter_values)
         self._close_filters(driver)
         return filter_values
     

@@ -134,7 +134,7 @@ class DownloadProductView(APIView):
                 tab_info = tab_info.get_attribute('innerHTML')
                 soup = BeautifulSoup(tab_info, features="lxml")
                 excluded_values = ('Not Specified', 'All listings', 'Best Offer')
-                filter_values = [label.text for label in soup.select('label.field__label > span') if label.text not in excluded_values ]
+                filter_values = [label.text for label in soup.select('label.field__label > span') if label.text not in excluded_values and '(' not in label.text and ')' not in label.txt]
                 print(filter_values)
             self._close_filters(driver)
             return filter_values
