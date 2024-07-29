@@ -54,8 +54,7 @@ def request_scraping(category_id):
         print(f'Error occurred: {str(e)}')
             
 try:
-    import pdb
-    pdb.set_trace()
     mobile_phone_scraping_scheduler.delay(category_id=9355, new_process=True, first_process=True)
 except Exception as e:
     print(f'Error occurred: {str(e)}')
+
