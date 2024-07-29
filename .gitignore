@@ -52,3 +52,5 @@ Thumbs.db
 */.idea/
 __pycache__
 */.env
+
+*/celerybeat-schedule
