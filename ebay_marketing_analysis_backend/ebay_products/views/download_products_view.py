@@ -67,9 +67,12 @@ class DownloadProductView(APIView):
                 MobileScrapingProcess.objects.filter(scraping_process=scraping_process).update(is_completed=False, mobile_model='')
             mobile_processes = MobileScrapingProcess.objects.filter(scraping_process=scraping_process, is_completed=False)
             for mobile_process in mobile_processes:
+                mobile_process = MobileScrapingProcess.objects.get(pk=mobile_process.id)
+                if mobile_process.is_completed == True:
+                    continue
                 check_internet_connection()
-                self.download_mobile_data(url, mobile_process, category)
-            mobile_proccesses = MobileScrapingProcess.objects.filter(scraping_process=scraping_process, is_completed=False)
+                self.download_mobile_data(url, mobile_process.id, category)
+            mobile_proccesses = MobileScrapingProcess.objects.filter(scraping_process=scraping_process, is_completed=False).first()
             if not mobile_proccesses:
                 scraping_process.is_completed = True
                 scraping_process.save()
@@ -129,7 +132,7 @@ class DownloadProductView(APIView):
                 )
                 tab_info = driver.find_element(By.CSS_SELECTOR, 'div.x-overlay__wrapper--right')
                 tab_info = tab_info.get_attribute('innerHTML')
-                soup = BeautifulSoup(tab_info)
+                soup = BeautifulSoup(tab_info, features="lxml")
                 excluded_values = ('Not Specified', 'All listings', 'Best Offer')
                 filter_values = [label.text for label in soup.select('label.field__label > span') if label.text not in excluded_values ]
                 print(filter_values)
@@ -190,10 +193,11 @@ class DownloadProductView(APIView):
             print(e)
         return False
     
-    def download_mobile_data(self, url, mobile_process, category):
+    def download_mobile_data(self, url, mobile_process_id, category):
         check_internet_connection()
         self.selenium_webdriver = SeleniumWebDriver(headless=True)
         self.visit_count = 0
+        mobile_process = MobileScrapingProcess.objects.get(id=mobile_process_id)
         params = {
             'LH_Complete': 1, 
             'LH_Sold': 1,
@@ -216,8 +220,11 @@ class DownloadProductView(APIView):
         for mobile in tqdm(mobile_phones):
             count += 1
             try:
+                mobile_process = MobileScrapingProcess.objects.get(id=mobile_process_id)
                 mobile_process.mobile_model = mobile
                 mobile_process.save()
+                if mobile_process.is_completed == True:
+                    continue
                 filter_params = copy.deepcopy(params)
                 filter_params.update({'Model': mobile})
                 encoded_url = create_encoded_url(url, filter_params)

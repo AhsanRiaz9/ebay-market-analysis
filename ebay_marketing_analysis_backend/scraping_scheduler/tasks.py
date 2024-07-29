@@ -35,7 +35,7 @@ def mobile_phone_scraping_scheduler(category_id, new_process=False, first_proces
     scraping_process = ScrapingProcess.objects.filter(category=category, is_completed=False).first()
     if scraping_process:
         scraping_status = 'Completed' if scraping_process.is_completed else 'In Completed'
-        mobile_phone_scraping = MobileScrapingProcess.objects.filter(scraping_process=scraping_process).first()
+        mobile_phone_scraping = MobileScrapingProcess.objects.filter(scraping_process=scraping_process, is_completed=False).first()
         if mobile_phone_scraping:
             ebay_condition = mobile_phone_scraping.condition.ebay_condition_id
             mobile_model = mobile_phone_scraping.mobile_model
@@ -54,6 +54,8 @@ def request_scraping(category_id):
         print(f'Error occurred: {str(e)}')
             
 try:
+    import pdb
+    pdb.set_trace()
     mobile_phone_scraping_scheduler.delay(category_id=9355, new_process=True, first_process=True)
 except Exception as e:
     print(f'Error occurred: {str(e)}')
