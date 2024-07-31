@@ -39,7 +39,7 @@ def mobile_phone_scraping_scheduler(category_id, new_process=False, first_proces
         if mobile_phone_scraping:
             ebay_condition = mobile_phone_scraping.condition.ebay_condition_id
             mobile_model = mobile_phone_scraping.mobile_model
-            listing_type = 'Sold Items' if mobile_phone_scraping.is_sold_listing else 'But It Now Items'
+            listing_type = 'Sold Items' if mobile_phone_scraping.is_sold_listing else 'Buy It Now Items'
         else:
             ebay_condition = ''
             mobile_model = ''
