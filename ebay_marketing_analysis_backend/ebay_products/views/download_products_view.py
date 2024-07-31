@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from settings.utilis.helpers import SeleniumWebDriver, create_encoded_url, format_date, check_internet_connection, create_internet_connection, check_webdriver_close_exception
 from product_configuration.models import ProductModel, BrandCategory, ColorCategory, Category, Storage, ProductModelCategory, Condition, ConditionCategory, LockStatus, Location, Brand, Color
-from ebay_products.models import MobilePhone
+from ebay_products.models import MobilePhone, ActiveMobilePhone
 import threading
 import copy
 from tqdm import tqdm
@@ -59,7 +59,7 @@ class DownloadProductView(APIView):
             if not scraping_process:
                 scraping_process = ScrapingProcess.objects.create(category=category)
                 conditions = ConditionCategory.objects.filter(category=category)
-                mobile_scraping_processes = [MobileScrapingProcess(scraping_process=scraping_process, condition=condition_category.condition) for condition_category in conditions]
+                mobile_scraping_processes = [MobileScrapingProcess(scraping_process=scraping_process, condition=condition_category.condition, is_sold_listing=condition_category.is_sold_listing) for condition_category in conditions]
                 MobileScrapingProcess.objects.bulk_create(mobile_scraping_processes, ignore_conflicts=True)
             if scraping_process.is_completed == True:
                 scraping_process.is_completed = False
@@ -205,15 +205,20 @@ class DownloadProductView(APIView):
         self.selenium_webdriver = SeleniumWebDriver(headless=True)
         self.visit_count = 0
         mobile_process = MobileScrapingProcess.objects.get(id=mobile_process_id)
+        listing_types = {
+            'but_it_now': {'LH_BIN': 1,}, 
+            'sold_listing': {'LH_Complete': 1, 'LH_Sold': 1}
+        }
         params = {
-            'LH_Complete': 1, 
-            'LH_Sold': 1,
             'rt': 'nc', 
-            'LH_BIN': 1,
             'mag': 1,
             'LH_ItemCondition': mobile_process.condition.ebay_condition_id,
             '_sop': 10
         }
+        if mobile_process.is_sold_listing == True:
+            params.update(listing_types['sold_listing'])
+        else:
+            params.update(listing_types['but_it_now'])
         encoded_url = create_encoded_url(url, params)
         check_internet_connection()
         self.visit_url(encoded_url)
@@ -281,7 +286,7 @@ class DownloadProductView(APIView):
                                 time.sleep(2)
                                 if self.items_exists(encoded_url) == False:
                                     continue
-                                self.scrap_data(url, params, {'Model': mobile, 'Brand': brand_name, 'Storage Capacity': storage, 'Colour': color, 'Lock Status': lock_status}, category)
+                                self.scrap_data(url, params, mobile_process, {'Model': mobile, 'Brand': brand_name, 'Storage Capacity': storage, 'Colour': color, 'Lock Status': lock_status}, category)
             except NetworkException as ne:
                 print('Scraping stopped due to =>', ne)
                 self.selenium_webdriver.close()
@@ -325,7 +330,7 @@ class DownloadProductView(APIView):
             check_webdriver_close_exception(e)
         check_internet_connection()
          
-    def scrap_data(self, url, params, filter_conditions, category):
+    def scrap_data(self, url, params, mobile_process, filter_conditions, category):
         driver = self.selenium_webdriver.driver
         location = Location.objects.filter(domain='ebay.com.au').first()
         filter_params = copy.deepcopy(params)
@@ -348,16 +353,6 @@ class DownloadProductView(APIView):
                     item.location_once_scrolled_into_view
                     title = item.find_element(By.CSS_SELECTOR, 'h3').text
                     image = item.find_element(By.CSS_SELECTOR, 'img').get_attribute('src')
-                    sold_price = item.find_elements(By.CSS_SELECTOR, 'span.s-item__price')
-                    if not sold_price:
-                        sold_price = item.find_elements(By.CSS_SELECTOR, 'span.bsig__price')
-                    sold_price = sold_price[0].text.split('-')[0].replace('AU $', '').strip()
-                    if ' to ':
-                        sold_price = sold_price.split(' to ')[0].replace(',', '')
-                    if sold_price.lower() == 'free':
-                        sold_price = 0.0
-                    else:
-                        sold_price = float(sold_price)
                     product_url = item.find_elements(By.CSS_SELECTOR, 'div.s-item__info > a')
                     if not product_url:
                         product_url = item.find_elements(By.CSS_SELECTOR, 'span.bsig__title > a')
@@ -368,12 +363,16 @@ class DownloadProductView(APIView):
                         ebay_item_id = int(product_url.split('?')[0].split('p/')[1])
                     product_url_params = [url_params for url_params in product_url.split('?')[1].split('&') if 'itmmeta' not in url_params]
                     product_url = f"{product_url.split('?')[0]}?{'&'.join(product_url_params)}"
-                    sold_date = item.find_elements(By.CSS_SELECTOR, 'span.s-item__pl > span > span')
-                    if sold_date:
-                        sold_date = sold_date[0].get_attribute('data-w')
-                        sold_date = format_date(sold_date)
+                    sold_price = item.find_elements(By.CSS_SELECTOR, 'span.s-item__price')
+                    if not sold_price:
+                        sold_price = item.find_elements(By.CSS_SELECTOR, 'span.bsig__price')
+                    sold_price = sold_price[0].text.split('-')[0].replace('AU $', '').strip()
+                    if ' to ':
+                        sold_price = sold_price.split(' to ')[0].replace(',', '')
+                    if sold_price.lower() == 'free':
+                        sold_price = 0.0
                     else:
-                        sold_date = ''
+                        sold_price = float(sold_price)
                     shipping_fee = item.find_elements(By.CSS_SELECTOR, 'span.s-item__shipping')
                     if not shipping_fee:
                         shipping_fee = item.find_elements(By.CSS_SELECTOR, 'span.bsig__logisticsCost')
@@ -384,6 +383,13 @@ class DownloadProductView(APIView):
                         else:
                             shipping_fee = shipping_fee.split(' postage')[0].replace('AU $', '').strip()
                             shipping_fee = float(shipping_fee)
+                    if mobile_process.is_sold_listing == True:
+                        sold_date = item.find_elements(By.CSS_SELECTOR, 'span.s-item__pl > span > span')
+                        if sold_date:
+                            sold_date = sold_date[0].get_attribute('data-w')
+                            sold_date = format_date(sold_date)
+                        else:
+                            sold_date = ''
                     product_model = ProductModelCategory.objects.filter(product_model__name=filter_conditions['Model']).first()
                     if not product_model:
                         product_model = self.create_product_model(filter_conditions['Model'], category)
@@ -400,9 +406,14 @@ class DownloadProductView(APIView):
                     lock_status = LockStatus.objects.filter(name=filter_conditions['Lock Status']).first()
                     if not lock_status:
                         lock_status = self.create_lock_status(filter_conditions['Lock Status'])
-                    mobile_phone = MobilePhone(title=title, sold_price=sold_price, shipping_fee=shipping_fee, ebay_item_id=ebay_item_id,
-                       product_url=product_url, image=image, category=category, product_model=product_model, brand=brand, color=color, storage=storage, lock_status=lock_status,
-                       location=location, condition=condition, sold_date=sold_date)
+                    if mobile_process.is_sold_listing == True:
+                        mobile_phone = MobilePhone(title=title, sold_price=sold_price, shipping_fee=shipping_fee, ebay_item_id=ebay_item_id,
+                        product_url=product_url, image=image, category=category, product_model=product_model, brand=brand, color=color, storage=storage, lock_status=lock_status,
+                        location=location, condition=condition, sold_date=sold_date)
+                    else:
+                        mobile_phone = ActiveMobilePhone(title=title, price=sold_price, shipping_fee=shipping_fee, ebay_item_id=ebay_item_id, 
+                        product_url=product_url, image=image, category=category, product_model=product_model, brand=brand, color=color, storage=storage, lock_status=lock_status,
+                        location=location, condition=condition)
                     mobile_phones_objects.append(mobile_phone)
                 next_btn = driver.find_elements(By.CSS_SELECTOR, 'a.pagination__next')
                 if next_btn:
@@ -420,8 +431,11 @@ class DownloadProductView(APIView):
                 data_available = False
                 break 
         if mobile_phones_objects:
-            MobilePhone.objects.bulk_create(mobile_phones_objects, ignore_conflicts=True, batch_size=100)    
-    
+            if mobile_process.is_sold_listing == True:
+                MobilePhone.objects.bulk_create(mobile_phones_objects, ignore_conflicts=True, batch_size=100)    
+            else:
+                ActiveMobilePhone.objects.bulk_create(mobile_phones_objects, ignore_conflicts=True, batch_size=100)
+            
     def create_product_model(self, model_name, category):
         try:
             product_model_category = None

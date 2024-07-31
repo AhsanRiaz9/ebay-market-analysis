@@ -22,7 +22,7 @@ def send_message(channel_id, message_text):
             print(f"Got an error: {e.response['error']}")
 
 
-def generate_mobile_phone_scraping_report(ebay_category_id, current_condition, current_mobile_phone, total_scraped, today_scraped, last_20_minutes_scraped, scraping_status):
+def generate_mobile_phone_scraping_report(ebay_category_id, current_condition, current_mobile_phone, total_scraped, today_scraped, last_20_minutes_scraped, listing_type, scraping_status):
     current_timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     report_message = f"""
     📱 *Mobile Phone Scraping Report* 📱
@@ -36,6 +36,7 @@ def generate_mobile_phone_scraping_report(ebay_category_id, current_condition, c
     *Scraped in Last 20 Minutes:* {last_20_minutes_scraped}
     *Currently Scraping:* {current_mobile_phone}
     *Condition:* {current_condition}
+    *Listing Type:* {listing_type}
 
     🔄 *Scraping Status:* {scraping_status}
 

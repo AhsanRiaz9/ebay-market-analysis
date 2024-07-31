@@ -39,10 +39,12 @@ def mobile_phone_scraping_scheduler(category_id, new_process=False, first_proces
         if mobile_phone_scraping:
             ebay_condition = mobile_phone_scraping.condition.ebay_condition_id
             mobile_model = mobile_phone_scraping.mobile_model
+            listing_type = 'Sold Items' if mobile_phone_scraping.is_sold_listing else 'But It Now Items'
         else:
             ebay_condition = ''
             mobile_model = ''
-        generate_mobile_phone_scraping_report(category_id, ebay_condition, mobile_model, total_mobile_phones.count(), today_scraped_phones.count(), last_20_minutes_scraped.count(), scraping_status)
+            listing_type = ''
+        generate_mobile_phone_scraping_report(category_id, ebay_condition, mobile_model, total_mobile_phones.count(), today_scraped_phones.count(), last_20_minutes_scraped.count(), listing_type, scraping_status)
 
 
 def request_scraping(category_id):

@@ -10,10 +10,11 @@ class Condition(models.Model):
 
 class ConditionCategory(models.Model):
     condition = models.ForeignKey(Condition, on_delete=models.CASCADE)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)    
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    is_sold_listing = models.BooleanField(default=True)
     
     class Meta:
-        unique_together = ('condition', 'category',)
+        unique_together = ('condition', 'category', 'is_sold_listing')
 
     def __str__(self):
-        return f'{self.category}:{self.condition.name}:{self.condition.ebay_condition_id}'
+        return f'{self.category}:{self.condition.name}:{self.condition.ebay_condition_id}:{self.is_sold_listing}'

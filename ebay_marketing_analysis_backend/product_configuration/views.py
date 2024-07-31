@@ -12,6 +12,7 @@ import pandas as pd
 import io
 import time
 from tqdm import tqdm
+from scraping_scheduler.models import ScrapingProcess, MobileScrapingProcess
 
 # Create your views here.
 class LoadProductConfiguration(APIView):
@@ -41,6 +42,7 @@ class LoadProductConfiguration(APIView):
             self.download_lock_statuses_data(driver)
             self.download_storage_capacity_data(driver)
             self.download_conditions_data(driver, category)
+            self.create_scraping_process(category)
         except Exception as e:
             print(e)
             selenium_webdriver.close()
@@ -182,26 +184,36 @@ class LoadProductConfiguration(APIView):
         url = f'https://www.ebay.com.au/b/{category.ebay_category_id}/'
         conditions = Condition.objects.all()
         condition_categories_objects = []
-        for condition in conditions:
-            params = {
-                'LH_Complete': 1, 
-                'LH_Sold': 1,
-                'rt': 'nc', 
-                'LH_BIN': 1,
-                'mag': 1,
-                'LH_ItemCondition': condition.ebay_condition_id
-            }
-            encoded_url = create_encoded_url(url, params)
-            driver.get(encoded_url)
-            time.sleep(5)
-            items = driver.find_elements(By.CSS_SELECTOR, 'li.s-item')
-            if len(items) != 0:
-                condition_categories_objects.append(ConditionCategory(condition=condition, category=category))                
-        if condition_categories_objects:
-            ConditionCategory.objects.bulk_create(condition_categories_objects, ignore_conflicts=True, batch_size=500)
+        listing_types = {
+            'but_it_now': {'LH_BIN': 1,}, 
+            'sold_listing': {'LH_Complete': 1, 'LH_Sold': 1}
+        }
+        for key in listing_types.keys():
+            sold_flag = True if key == 'sold_listing' else False
+            for condition in conditions:
+                params = {
+                    'rt': 'nc', 
+                    'mag': 1,
+                    'LH_ItemCondition': condition.ebay_condition_id
+                }
+                params.update(listing_types[key])
+                encoded_url = create_encoded_url(url, params)
+                driver.get(encoded_url)
+                time.sleep(5)
+                items = driver.find_elements(By.CSS_SELECTOR, 'li.s-item')
+                if len(items) != 0:
+                    condition_categories_objects.append(ConditionCategory(condition=condition, category=category, is_sold_listing=sold_flag))                
+            if condition_categories_objects:
+                ConditionCategory.objects.bulk_create(condition_categories_objects, ignore_conflicts=True, batch_size=500)
 
-
-
+    def create_scraping_process(self, cateogry):
+        condition_categories = ConditionCategory.objects.filter(category=cateogry)
+        scraping_process = ScrapingProcess.objects.filter(category=cateogry).first()
+        if not scraping_process:
+            scraping_process = ScrapingProcess.objects.create(cateogry=cateogry)
+        mobile_scraping_processes = [MobileScrapingProcess(scraping_process=scraping_process, condition=condition_category.condition, is_sold_listing=condition_category.is_sold_listing) for condition_category in condition_categories]
+        MobileScrapingProcess.objects.bulk_create(mobile_scraping_processes, ignore_conflicts=True, batch_size=100)
+        
 class DownloadEbayCondtions(APIView):
     def get(self, request, *args, **kwargs):
         t = threading.Thread(target=self.download_data, args=[],daemon=True)
