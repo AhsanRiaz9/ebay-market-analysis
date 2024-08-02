@@ -206,7 +206,7 @@ class DownloadProductView(APIView):
         self.visit_count = 0
         mobile_process = MobileScrapingProcess.objects.get(id=mobile_process_id)
         listing_types = {
-            'but_it_now': {'LH_BIN': 1,}, 
+            'buy_it_now': {'LH_BIN': 1,}, 
             'sold_listing': {'LH_Complete': 1, 'LH_Sold': 1}
         }
         params = {
@@ -218,7 +218,7 @@ class DownloadProductView(APIView):
         if mobile_process.is_sold_listing == True:
             params.update(listing_types['sold_listing'])
         else:
-            params.update(listing_types['but_it_now'])
+            params.update(listing_types['buy_it_now'])
         encoded_url = create_encoded_url(url, params)
         check_internet_connection()
         self.visit_url(encoded_url)

@@ -36,7 +36,7 @@ def generate_mobile_phone_scraping_report(ebay_category_id, current_condition, c
     *Total Scraped Today:* {mobile_data['sold_items']['today_scraped']}
     *Scraped in Last 20 Minutes:* {mobile_data['sold_items']['last_20_minutes_scraped']}
     
-    * *But It Now Items Report:* *
+    * *Buy It Now Items Report:* *
     *Total Mobile Phones Scraped:* {mobile_data['buy_it_now_items']['total_scraped']}
     *Total Scraped Today:* {mobile_data['buy_it_now_items']['today_scraped']}
     *Scraped in Last 20 Minutes:* {mobile_data['buy_it_now_items']['last_20_minutes_scraped']}

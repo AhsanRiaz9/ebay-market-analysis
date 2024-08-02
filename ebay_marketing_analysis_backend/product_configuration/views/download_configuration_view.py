@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from settings.utilis.helpers import SeleniumWebDriver, create_encoded_url
-from .models import Category, Brand, BrandCategory, Color, ColorCategory, LockStatus, Storage, ProductModel, ProductModelCategory, Condition, ConditionCategory, Filter, FilterCategory, Location
+from product_configuration.models import Category, Brand, BrandCategory, Color, ColorCategory, LockStatus, Storage, ProductModel, ProductModelCategory, Condition, ConditionCategory, Filter, FilterCategory, Location
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -185,7 +185,7 @@ class LoadProductConfiguration(APIView):
         conditions = Condition.objects.all()
         condition_categories_objects = []
         listing_types = {
-            'but_it_now': {'LH_BIN': 1,}, 
+            'buy_it_now': {'LH_BIN': 1,}, 
             'sold_listing': {'LH_Complete': 1, 'LH_Sold': 1}
         }
         for key in listing_types.keys():
