@@ -12,7 +12,7 @@ class MobilePhoneListView(ListAPIView):
     def get_queryset(self):
         queryset = MobilePhone.objects.all().order_by('-created_at')
         params = self.request.GET
-        title = params.get('title', '')
+        title = params.get('title', '').lower().strip()
         if title:
             queryset = queryset.filter(title__icontains=title)
         date_range = params.get('date_range','')

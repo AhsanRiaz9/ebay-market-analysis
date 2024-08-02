@@ -26,6 +26,10 @@ class DownloadProductView(APIView):
         t.start()
         return Response({'message': f'Background job started to download product data of category {category_id}.'})
     
+    def set_up_selenium_webdriver(self):
+        self.selenium_webdriver = SeleniumWebDriver(headless=True)
+        self.set_postage_location('australia')
+        
     def run_scraping_process(self, category_id):
         attempt = 0
         while attempt <= 10:
@@ -104,7 +108,7 @@ class DownloadProductView(APIView):
         except Exception as e:
             check_webdriver_close_exception(e)
             self.selenium_webdriver.close()
-            self.selenium_webdriver = SeleniumWebDriver(headless=True)
+            self.set_up_selenium_webdriver()
             check_internet_connection()
             self.selenium_webdriver.driver.get(encoded_url)
             time.sleep(3)
@@ -153,7 +157,7 @@ class DownloadProductView(APIView):
             check_webdriver_close_exception(e)
             if attempt == 0:
                 self.selenium_webdriver.close()
-                self.selenium_webdriver = SeleniumWebDriver(headless=True)
+                self.set_up_selenium_webdriver()
                 self.selenium_webdriver.driver.get(encoded_url)
                 check_internet_connection()
                 time.sleep(3)
@@ -200,20 +204,21 @@ class DownloadProductView(APIView):
             print(e)
         return False
     
+    
+    
     def download_mobile_data(self, url, mobile_process_id, category):
         check_internet_connection()
-        self.selenium_webdriver = SeleniumWebDriver(headless=True)
+        self.set_up_selenium_webdriver()
         self.visit_count = 0
         mobile_process = MobileScrapingProcess.objects.get(id=mobile_process_id)
         listing_types = {
             'buy_it_now': {'LH_BIN': 1,}, 
-            'sold_listing': {'LH_Complete': 1, 'LH_Sold': 1}
+            'sold_listing': {'LH_Complete': 1, 'LH_Sold': 1, '_sop': 10}
         }
         params = {
             'rt': 'nc', 
             'mag': 1,
             'LH_ItemCondition': mobile_process.condition.ebay_condition_id,
-            '_sop': 10
         }
         if mobile_process.is_sold_listing == True:
             params.update(listing_types['sold_listing'])
@@ -314,12 +319,12 @@ class DownloadProductView(APIView):
             error_msg = 'An error occurred while processing your request.'
             if self.visit_count%20==0 or error_msg in body_text:
                 self.selenium_webdriver.close()
-                self.selenium_webdriver = SeleniumWebDriver(headless=True)
+                self.set_up_selenium_webdriver()
                 self.selenium_webdriver.driver.get(url)
                 time.sleep(3)
         except InvalidArgumentException as e:
             self.selenium_webdriver.close()
-            self.selenium_webdriver = SeleniumWebDriver(headless=True)
+            self.set_up_selenium_webdriver()
             self.selenium_webdriver.driver.get(url)
         except WebDriverCloseException as e:
             raise WebDriverCloseException('Webdriver closed.')
@@ -329,7 +334,27 @@ class DownloadProductView(APIView):
             print('Error occur in visit url, exception =>', e)
             check_webdriver_close_exception(e)
         check_internet_connection()
-         
+    
+    def set_postage_location(self, country):
+        print(country)
+        driver = self.selenium_webdriver.driver
+        driver.get('https://www.ebay.com.au/sch/i.html?_from=R40&_trksid=p4432023.m570.l1313&_nkw=iphone&_sacat=0')
+        time.sleep(3)
+        postage_btn = driver.find_elements(By.CSS_SELECTOR, 'button > span.s-zipcode-entry__label')
+        if postage_btn:
+            postage_btn[0].click()
+            time.sleep(2)
+            country_selector = driver.find_elements(By.CSS_SELECTOR, 'select#c2-10-16-24-7-select')
+            if country_selector:
+                country_selector[0].send_keys(country)
+                post_code = driver.find_element(By.CSS_SELECTOR, 'input#c2-10-16-24-10-textbox')
+                post_code.send_keys('2144')
+                time.sleep(1)
+                apply_btn = driver.find_elements(By.CSS_SELECTOR, '.s-zipcode-entry__apply > button.btn--primary')
+                if apply_btn:
+                    apply_btn[0].click()
+                    time.sleep(3)
+                 
     def scrap_data(self, url, params, mobile_process, filter_conditions, category):
         driver = self.selenium_webdriver.driver
         location = Location.objects.filter(domain='ebay.com.au').first()
@@ -411,6 +436,11 @@ class DownloadProductView(APIView):
                         product_url=product_url, image=image, category=category, product_model=product_model, brand=brand, color=color, storage=storage, lock_status=lock_status,
                         location=location, condition=condition, sold_date=sold_date)
                     else:
+                        mobile_exist = ActiveMobilePhone.objects.filter(product_url=product_url).first()
+                        if mobile_exist:
+                            print('Process stop due to repeated sold data.')
+                            data_available = False
+                            break
                         mobile_phone = ActiveMobilePhone(title=title, price=sold_price, shipping_fee=shipping_fee, ebay_item_id=ebay_item_id, 
                         product_url=product_url, image=image, category=category, product_model=product_model, brand=brand, color=color, storage=storage, lock_status=lock_status,
                         location=location, condition=condition)
