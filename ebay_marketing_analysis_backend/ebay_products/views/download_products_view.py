@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from settings.utilis.helpers import SeleniumWebDriver, create_encoded_url, format_date, check_internet_connection, create_internet_connection, check_webdriver_close_exception
 from product_configuration.models import ProductModel, BrandCategory, ColorCategory, Category, Storage, ProductModelCategory, Condition, ConditionCategory, LockStatus, Location, Brand, Color
-from ebay_products.models import MobilePhone, ActiveMobilePhone
+from ebay_products.models import MobilePhone, ActiveMobilePhone, ProductRankCounter
 import threading
 import copy
 from tqdm import tqdm
@@ -69,6 +69,10 @@ class DownloadProductView(APIView):
                 scraping_process.is_completed = False
                 scraping_process.save()
                 MobileScrapingProcess.objects.filter(scraping_process=scraping_process).update(is_completed=False, mobile_model='')
+                product_ranker = ProductRankCounter.objects.filter(category=category).first()
+                if product_ranker:
+                    product_ranker.value = 0
+                    product_ranker.save()
             mobile_processes = MobileScrapingProcess.objects.filter(scraping_process=scraping_process, is_completed=False)
             for mobile_process in mobile_processes:
                 mobile_process = MobileScrapingProcess.objects.get(pk=mobile_process.id)
@@ -94,7 +98,11 @@ class DownloadProductView(APIView):
             status = False
         result = {'message': msg, 'status': status, 'error_type': error_type}
         return result
-
+    
+    def get_product_rank(self, category):
+        product_ranker = ProductRankCounter.objects.filter(category=category).first()
+        return product_ranker
+        
     def items_exists(self, encoded_url, attempt=0):
         driver = self.selenium_webdriver.driver
         check_internet_connection()
@@ -366,6 +374,8 @@ class DownloadProductView(APIView):
         time.sleep(3)
         mobile_phones_objects = []
         print(filter_params)
+        product_ranker = self.get_product_rank(category)
+        rank_vaule = product_ranker.value
         data_available = True
         while data_available:
             try:
@@ -432,16 +442,26 @@ class DownloadProductView(APIView):
                     if not lock_status:
                         lock_status = self.create_lock_status(filter_conditions['Lock Status'])
                     if mobile_process.is_sold_listing == True:
+                        mobile_exist = MobilePhone.objects.filter(product_url=product_url).first()
+                        if mobile_exist:
+                            # if sold product exist then stop the downloading the products
+                            print('Process stop due to repeated sold data.')
+                            data_available = False
+                            break
                         mobile_phone = MobilePhone(title=title, sold_price=sold_price, shipping_fee=shipping_fee, ebay_item_id=ebay_item_id,
                         product_url=product_url, image=image, category=category, product_model=product_model, brand=brand, color=color, storage=storage, lock_status=lock_status,
                         location=location, condition=condition, sold_date=sold_date)
                     else:
-                        mobile_exist = ActiveMobilePhone.objects.filter(product_url=product_url).first()
-                        if mobile_exist:
-                            print('Process stop due to repeated sold data.')
-                            data_available = False
-                            break
-                        mobile_phone = ActiveMobilePhone(title=title, price=sold_price, shipping_fee=shipping_fee, ebay_item_id=ebay_item_id, 
+                        rank_vaule += 1
+                        mobile = ActiveMobilePhone.objects.filter(product_url=product_url).first()
+                        if mobile:
+                            # if active mobile exist, then update the price and shipping fee of product
+                            mobile.price = sold_price
+                            mobile.shipping_fee = shipping_fee
+                            mobile.ranking = rank_vaule
+                            mobile.save()
+                            continue
+                        mobile_phone = ActiveMobilePhone(title=title, price=sold_price, shipping_fee=shipping_fee, ebay_item_id=ebay_item_id, ranking=rank_vaule,
                         product_url=product_url, image=image, category=category, product_model=product_model, brand=brand, color=color, storage=storage, lock_status=lock_status,
                         location=location, condition=condition)
                     mobile_phones_objects.append(mobile_phone)
@@ -465,6 +485,8 @@ class DownloadProductView(APIView):
                 MobilePhone.objects.bulk_create(mobile_phones_objects, ignore_conflicts=True, batch_size=100)    
             else:
                 ActiveMobilePhone.objects.bulk_create(mobile_phones_objects, ignore_conflicts=True, batch_size=100)
+                product_ranker.value = rank_vaule
+                product_ranker.save()
             
     def create_product_model(self, model_name, category):
         try:

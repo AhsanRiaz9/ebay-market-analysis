@@ -34,4 +34,10 @@ class ActiveMobilePhone(models.Model):
     lock_status = models.ForeignKey(LockStatus, on_delete=models.SET_NULL, null=True)
     condition = models.ForeignKey(Condition, on_delete=models.SET_NULL, null=True)
     location = models.ForeignKey(Location, on_delete=models.SET_NULL, null=True)
+    ranking = models.BigIntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
+
+class ProductRankCounter(models.Model):
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True)
+    value = models.IntegerField(default=0)
+

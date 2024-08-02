@@ -13,6 +13,7 @@ import io
 import time
 from tqdm import tqdm
 from scraping_scheduler.models import ScrapingProcess, MobileScrapingProcess
+from ebay_products.models import ProductRankCounter
 
 # Create your views here.
 class LoadProductConfiguration(APIView):
@@ -34,6 +35,9 @@ class LoadProductConfiguration(APIView):
                 category = Category.objects.create(name=category_name, ebay_category_id=category_id)
             else:
                 category = category[0]
+            product_ranker = ProductRankCounter.objects.filter(category=category).first()
+            if not product_ranker:
+                product_ranker = ProductRankCounter.objects.create(category=category)
             time.sleep(3)
             self.download_filters_data(driver, category)
             self.download_brands_data(driver, category)

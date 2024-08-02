@@ -3,7 +3,7 @@ from product_configuration.models import Category
 from scraping_scheduler.models import ScrapingProcess, MobileScrapingProcess
 from django.utils import timezone
 from datetime import timedelta
-from ebay_products.models import MobilePhone, ActiveMobilePhone
+from ebay_products.models import MobilePhone, ActiveMobilePhone, ProductRankCounter
 import os
 import requests
 import datetime
@@ -27,6 +27,10 @@ def mobile_phone_scraping_scheduler(category_id, new_process=False, first_proces
                 if scraping_process.is_completed == True and new_process == True:
                     ScrapingProcess.objects.filter(category=category).update(is_completed=False)
                     MobileScrapingProcess.objects.filter(scraping_process=scraping_process).update(is_completed=False, mobile_model='')
+                    product_ranker = ProductRankCounter.objects.filter(category=category).first()
+                    if product_ranker:
+                        product_ranker.value = 0
+                        product_ranker.save()
                 scraping_process = ScrapingProcess.objects.filter(category=category, is_completed=False).first()
                 if scraping_process:
                     request_scraping(category_id)
