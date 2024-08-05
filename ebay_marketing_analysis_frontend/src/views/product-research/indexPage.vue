@@ -1,8 +1,11 @@
 <template>
+  <div>
+    <div class="w-100 p-2 rounded-2 d-flex align-items-center px-4 main-head " style="background-color: white"><div class="w-25 "><p class="platform">eBay</p></div>
+    <div class="w-50 d-flex align-items-center"><div class="searchbox"><search-icon/> <input @input="searchdataApi" v-model="searchKeyword" type="text" placeholder="Search" class="searchbar"></div>
     <div>
-    <div class="w-100 p-2 rounded-2 d-flex align-items-center px-4" style="background-color: white"><div class="w-25"><p class="platform">eBay</p></div>
-    <div class="w-50 d-flex"><div class="searchbox"><search-icon/> <input type="text" placeholder="Search" class="searchbar"></div> 
-    <button class="searchbtn">Search</button></div>
+    </div> 
+    </div>
+    <!-- <button class="searchbtn">Search</button> -->
   </div>
     <div class="row" style="gap:30px 0; background-color: white; margin-block: 25px; padding: 20px;">
       <div class="col-lg-4 col-md-6 col-sm-12 col-xl-3">
@@ -44,7 +47,7 @@
   variant="underlined"
 ></v-select> -->
 <div class="bd-example mt-3">
-    <FlatPicker @change="callproductsApi"  v-model="data.dateRange"  :config="{mode: 'range', dateFormat:'Y-m-d'}" name="date" placeholder="Select Range of Date" class="form-control border-0" style="border-bottom: 1px solid black; font-weight: 700;"></FlatPicker>
+    <FlatPicker @change="callproductsApi"  v-model="data.dateRange"  :config="{mode: 'range', dateFormat:'Y-m-d'}" name="date" placeholder="Select Range of Date" class="form-control border-0" style="border-bottom: 1px solid black; font-weight: 700; padding-inline: 0;box-shadow: none"></FlatPicker>
   </div>
       </div>
       </div>
@@ -80,13 +83,14 @@
       <div class="col-lg-4 col-md-6 col-sm-12 col-xl-3">
         <div class="section">
     <div class="d-flex justify-content-between"><div></div> <h6 class="fw-semibold">Exclude phrase</h6><exclamation-circle-icon/></div>
-      <v-select
+      <!-- <v-select
       class="selectinput"
       clearable
   label="Exclude Phrase"
   :items="['Nothing to show here']"
   variant="underlined"
-></v-select>
+></v-select> -->
+<input class="pt-5 mt-2 exclude-phrase" v-model="data.excludePhrase" @input="callproductsApi"  style="border-bottom:  2px solid black;" placeholder=" Phrase must be ' , ' Separated " type="text">
       </div>
       </div>
       <div class="col-lg-4 col-md-6 col-sm-12 col-xl-3">
@@ -98,7 +102,9 @@
       class="selectinput"
       clearable
   label="Condition"
-  :items="['Brand New', 'As New', 'Excellent', 'Good', 'Fair']"
+  :items="condition.map(items=> ({name:items.name,id: items.ebay_condition_id}))"
+    item-title="name"
+    item-value="id"
   variant="underlined"
 ></v-select>
       </div>
@@ -392,7 +398,7 @@ import ExclamationCircleIcon from '@/components/icons/outlined/svg-icons/Exclama
 import KTDatatable from '@/components/kt-datatable/KTDatatable.vue';
 import { onMounted, ref } from 'vue';
 import SearchIcon from '@/components/icons/outlined/svg-icons/SearchIcon.vue';
-import { callProducts } from '@/service';
+import { callProducts,getConditions} from '@/service';
 import FlatPicker from 'vue-flatpickr-component'
 import { toast } from 'vue3-toastify';
   export default {
@@ -400,15 +406,19 @@ import { toast } from 'vue3-toastify';
   components: {ExclamationCircleIcon,KTDatatable,SearchIcon,FlatPicker},
 
   setup(){
+    const searchKeyword = ref('')
     const currentPage = ref(1);
     const rowsPerPage = ref(10);
     const results = ref('')
     const total = ref(0)
     const records = ref(0)
     const loading = ref(false)
+    const condition = ref([])
     const data = ref({
+      searchData: searchKeyword?.value,
       name:null,
       shippingLocation:null,
+      excludePhrase:null,
       dateRange: null,
       maxPrice:'',
       minPrice:'',
@@ -429,18 +439,52 @@ let timeout;
   }
   }
       await callProducts(1, dataCopy).then(data=>{
-      results.value = data.results
+      if(data){
+        results.value = data.results
           total.value = data.total_pages
           records.value = data.total_records
+        }
           loading.value = false
   }); 
     }
     catch (err){
       console.log(err)
+      loading.value = false
     }
   },1500)
 
-  }  
+  }
+  let timeeout;  
+  function searchdataApi () {
+    loading.value = true
+    clearTimeout(timeeout)
+   timeeout = setTimeout(() => {
+      if(!searchKeyword.value.startsWith(' ')){
+    let filter = searchKeyword.value.trim()
+    if(data.value.searchData != filter){
+      data.value.searchData = filter
+  callproductsApi() 
+    }
+  }
+  else{
+    let filter = searchKeyword.value.trim()
+    if(data.value.searchData != filter){
+      data.value.searchData = filter
+      callproductsApi()
+    }
+    
+  }
+    }, 1500);
+
+  }
+
+  // function addComa () {
+
+  //   if(data.value.excludePhrase && !data.value.excludePhrase.endsWith(',') && !data.value.excludePhrase.slice(-1).endsWith(' ') ){
+  //     data.value.excludePhrase += ','
+  //   }
+  // }
+
 
   function checkPrice () {
     
@@ -468,6 +512,19 @@ let timeout;
       }
       catch (err){
         loading.value = false
+      }
+      try{
+        await getConditions().then(data=>{
+          condition.value = data?.results
+          if(data.detail){
+            toast.error('Session Expired please login again ',{
+              autoClose:2000
+            })
+          }
+        })
+      }
+      catch(err){
+        console.log(err)
       }
       finally{
         loading.value = false
@@ -580,7 +637,10 @@ let timeout;
         data,
         callproductsApi,
         records,
-        checkPrice
+        checkPrice,
+        searchdataApi,
+        condition,
+        searchKeyword
         
       }
 
@@ -588,13 +648,28 @@ let timeout;
 
   }
 </script>
-    <style scoped>
+
+
+<style scoped>
+
+  .main-head{
+    min-height: 50px;
+  }
+
+/* .form-control:focus{
+  box-shadow: none;
+} */
+    .exclude-phrase::placeholder{
+      color: black;
+      font-weight: 600;
+    }
     *{
       color:black
     }
     .searchbox{
       border: 2px solid black;
       width: 70%;
+      max-height: 40px;
       border-radius: 10px;
       padding-inline: 10px;
     }

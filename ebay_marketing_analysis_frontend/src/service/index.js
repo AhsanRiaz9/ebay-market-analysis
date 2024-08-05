@@ -98,6 +98,15 @@ return await fetch(url+value+'&'+ new URLSearchParams(data).toString(),{method:'
 }
 
 
+export const getConditions = async () => {
+  const url = Urls.conditions
+  const Token = getUserauth()
+  return fetch(url, { method: 'GET', headers: { Authorization: 'Bearer ' + Token } }).then((response) => response.json())
+}
+
+
+
+
 
 // try{
 //   let dataCopy = {...data.value} || false
