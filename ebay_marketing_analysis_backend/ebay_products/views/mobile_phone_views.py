@@ -29,4 +29,13 @@ class MobilePhoneListView(ListAPIView):
             queryset = queryset.filter(sold_price__gte=min_price)
         if max_price:
             queryset = queryset.filter(sold_price__lte=max_price)
+        condition = params.get('condition','')
+        if condition:
+            queryset = queryset.filter(condition__ebay_condition_id=condition)
+        excluded_phrase = params.get('excludedPhrase','')
+        if excluded_phrase:
+            excluded_words = excluded_phrase.split(',')
+            for excluded_word in excluded_words:
+                queryset = queryset.exclude(title__icontains=excluded_word.lower().strip())
         return queryset
+
