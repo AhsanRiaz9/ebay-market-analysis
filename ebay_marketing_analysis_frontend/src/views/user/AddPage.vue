@@ -192,13 +192,24 @@ async function fetchRoles () {
         userSignup(payload).then(response => response.json()).then(data =>
         {
           if(data.message){
-            toast.info(data.message,{
+            toast.info(data?.message,{
+              autoClose:1500
+            })
+            store.dispatch('handleuserList',payload)
+            for(let x in Formdata.value){
+              Formdata.value[x] = ''
+            }
+          }
+          else{
+            toast.error(data?.email,{
               autoClose:1500
             })
           }
         }
-        )
-        store.dispatch('handleuserList',payload)
+        ).catch(error=>   toast.error(error,{
+              autoClose:1500
+            }))
+        
        } 
 
 

@@ -1,5 +1,5 @@
 <template>
-  <div class="dataTables_wrapper dt-bootstrap4 no-footer">
+  <div class="dataTables_wrapper dt-bootstrap4 no-footer position-relative">
     <div class="table-responsive">
       <div class="row w-100 justify-content-end py-1">
       <div
@@ -88,10 +88,10 @@
         </tbody>
         <div
           v-if="loading"
-          class="overlay-layer card-rounded bg-opacity-5"
+          class="overlay-layer loader card-rounded bg-opacity-5"
         >
         <!-- bg-dark -->
-          <div class="spinner-border text-primary mx-auto" role="status">
+          <div class="spinner-border spin-load text-primary mx-auto" role="status">
             <span class="visually-hidden">Loading...</span>
           </div>
         </div>
@@ -302,4 +302,20 @@ div.dataTables_wrapper div.dataTables_processing {
   top: 50%;
   left: 50%;
 }
+.loader{
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(5px)  ;
+  position: absolute;
+  top: 0;
+}
+.spin-load{
+width: 100px;
+height: 100px;
+font-size: xx-large;
+position: relative;
+top: 50%;
+left: 50%;
+}
+
 </style>

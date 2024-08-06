@@ -17,7 +17,7 @@
       class="selectinput"
   label="Select Marketplace"
   :items="['ebay.com.au']"
-    @update:modelValue="callproductsApi"
+  @update:modelValue="callproductsApi"
   variant="underlined"
 ></v-select>
       </div>
@@ -31,6 +31,20 @@
       v-model="data.shippingLocation"
   label="Select Shipping location"
   :items="['Australia']"
+  variant="underlined"
+  @update:modelValue="callproductsApi"
+></v-select>
+      </div>
+      </div>
+      <div class="col-lg-4 col-md-6 col-sm-12 col-xl-3">
+        <div class="section">
+    <div class="d-flex justify-content-between"><div></div> <h6 class="fw-semibold">Data Category</h6><exclamation-circle-icon/></div>
+      <v-select
+      clearable
+      class="selectinput"
+      v-model="data.dataCategory"
+  label="Select Shipping location"
+  :items="['Active','Sold']"
   variant="underlined"
   @update:modelValue="callproductsApi"
 ></v-select>
@@ -102,7 +116,7 @@
       class="selectinput"
       clearable
   label="Condition"
-  :items="condition?.map(items=> ({name:items.name,id: items.ebay_condition_id}))"
+  :items="condition && condition?.map(items=> ({name:items.name,id: items.ebay_condition_id}))"
     item-title="name"
     item-value="id"
   variant="underlined"
@@ -112,10 +126,10 @@
       <div class="py-3" style="background-color: white;">
         <div class=" fw-bold">Total count : {{ records }} items </div>
   <KTDatatable
-    :enable-items-per-page-dropdown="false"
+    :enable-items-per-page-dropdown="true"
     :table-data="results ? results : []"
     :table-header="headerConfig"
-    :loading="true"
+    :loading="loading"
     :total="total"
     :rowsPerPage="rowsPerPage"
     :currentPage="currentPage"
@@ -416,13 +430,14 @@ import { toast } from 'vue3-toastify';
     const condition = ref([])
     const data = ref({
       searchData: searchKeyword?.value,
-      name:null,
-      shippingLocation:null,
+      name:'ebay.com.au',
+      shippingLocation:'Australia',
       excludedPhrase:null,
       dateRange: null,
       maxPrice:'',
       minPrice:'',
       condition: null,
+      dataCategory : 'Active',
       
 
     })
@@ -517,7 +532,8 @@ let timeout;
       }
       try{
         await getConditions().then(data=>{
-          condition.value = data?.results
+          if(!data.detail){
+          condition.value = data}
           if(data?.detail){
             toast.error('Session Expired please login again ',{
               autoClose:2000
@@ -562,11 +578,6 @@ let timeout;
         sortable: false,
       },
       {
-        name: "Category",
-        key: "category",
-        sortable: false,
-      },
-      {
         name: "Product Model",
         key: "product_model",
         sortable: false,
@@ -594,11 +605,6 @@ let timeout;
       {
         name: "Condition",
         key: "condition",
-        sortable: false,
-      },
-      {
-        name: "Location",
-        key: "location",
         sortable: false,
       },
       {
