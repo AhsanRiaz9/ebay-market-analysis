@@ -104,6 +104,11 @@ export const getConditions = async () => {
   return fetch(url, { method: 'GET', headers: { Authorization: 'Bearer ' + Token } }).then((response) => response.json())
 }
 
+export const tokenValidate = async () =>{
+  const url = Urls.tokenValidate
+  const Token = getUserauth()
+  return fetch(url,{method:"POST",headers:{'Content-Type':'Application/json',},body: JSON.stringify(Token)}).then(response => response.json() )
+}
 
 
 

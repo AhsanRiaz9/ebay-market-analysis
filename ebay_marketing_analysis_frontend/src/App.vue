@@ -5,10 +5,27 @@
 <script>
 import { onMounted, onUnmounted, computed } from 'vue'
 import { useStore } from 'vuex'
+// import { tokenValidate } from './service';
 import '@/plugins/styles'
 export default {
   name: 'App',
   setup() {
+  //   async function Validatetoken () {
+  //     try{
+  //      const response =  await tokenValidate()
+  //      console.log(response)
+  //     } 
+  //     catch (err) {
+  //       console.log(err)
+  //     }
+  //   }
+
+  //  setInterval(() => {
+  //   Validatetoken()
+  //  }, 1800000);
+
+
+
     const store = useStore()
     store.dispatch('setting/setSetting')
     const sidebarType = computed(() => store.getters['setting/sidebar_type'])

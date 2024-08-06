@@ -90,7 +90,7 @@
   :items="['Nothing to show here']"
   variant="underlined"
 ></v-select> -->
-<input class="pt-5 mt-2 exclude-phrase" v-model="data.excludePhrase" @input="callproductsApi"  style="border-bottom:  2px solid black;" placeholder=" Phrase must be ' , ' Separated " type="text">
+<input class="pt-5 mt-2 exclude-phrase" v-model="data.excludedPhrase" @input="callproductsApi"  style="border-bottom:  2px solid black;" placeholder=" Phrase must be ' , ' Separated " type="text">
       </div>
       </div>
       <div class="col-lg-4 col-md-6 col-sm-12 col-xl-3">
@@ -102,7 +102,7 @@
       class="selectinput"
       clearable
   label="Condition"
-  :items="condition.map(items=> ({name:items.name,id: items.ebay_condition_id}))"
+  :items="condition?.map(items=> ({name:items.name,id: items.ebay_condition_id}))"
     item-title="name"
     item-value="id"
   variant="underlined"
@@ -115,7 +115,7 @@
     :enable-items-per-page-dropdown="false"
     :table-data="results ? results : []"
     :table-header="headerConfig"
-    :loading="loading"
+    :loading="true"
     :total="total"
     :rowsPerPage="rowsPerPage"
     :currentPage="currentPage"
@@ -418,7 +418,7 @@ import { toast } from 'vue3-toastify';
       searchData: searchKeyword?.value,
       name:null,
       shippingLocation:null,
-      excludePhrase:null,
+      excludedPhrase:null,
       dateRange: null,
       maxPrice:'',
       minPrice:'',
@@ -507,7 +507,9 @@ let timeout;
           results.value = data.results
           total.value = data.total_pages
           records.value = data.total_records
+          console.log(new Date ())
           loading.value = false
+          
         })
       }
       catch (err){
@@ -516,7 +518,7 @@ let timeout;
       try{
         await getConditions().then(data=>{
           condition.value = data?.results
-          if(data.detail){
+          if(data?.detail){
             toast.error('Session Expired please login again ',{
               autoClose:2000
             })
