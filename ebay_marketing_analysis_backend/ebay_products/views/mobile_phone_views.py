@@ -2,6 +2,7 @@ from rest_framework.generics import ListAPIView
 from ebay_products.serializers import MobilePhoneSerializer
 from ebay_products.models import MobilePhone
 from ebay_products.utilis.paginations import CutstomPagination
+from product_configuration.models import Condition
 
 class MobilePhoneListView(ListAPIView):
     model = MobilePhone
@@ -31,7 +32,8 @@ class MobilePhoneListView(ListAPIView):
             queryset = queryset.filter(sold_price__lte=max_price)
         condition = params.get('condition','')
         if condition:
-            queryset = queryset.filter(condition__ebay_condition_id=condition)
+            condition = Condition.objects.filter(ebay_condition_id=condition).first()
+            queryset = queryset.filter(condition=condition)
         excluded_phrase = params.get('excludedPhrase','')
         if excluded_phrase:
             excluded_words = excluded_phrase.split(',')

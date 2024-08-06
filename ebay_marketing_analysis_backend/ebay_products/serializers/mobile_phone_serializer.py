@@ -15,6 +15,6 @@ class MobilePhoneSerializer(serializers.ModelSerializer):
         response['color'] = instance.color.color.name if instance.color else ''
         response['storage'] = instance.storage.value if instance.storage else ''
         response['lock_status'] = instance.lock_status.name if instance.lock_status else ''
-        response['condition'] = instance.condition.ebay_condition_id if instance.condition else ''
+        response['condition'] = instance.condition.name if instance.condition else ''
         response['location'] = instance.location.country if instance.location else ''
         return response
