@@ -1,2 +1,3 @@
 from .download_configuration_view import LoadProductConfiguration, DownloadEbayCondtions, DownloadEbayLocations
 from .conditions_view import ConditionListView
+from .product_filters import ProductFiltersView

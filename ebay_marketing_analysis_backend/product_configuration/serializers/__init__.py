@@ -1,1 +1,5 @@
 from .condition_serializers import ConditionSerializer
+from .brands_serializers import BrandCategorySerializer
+from .color_serializers import ColorCategorySerializer
+from .storage_serializers import StorageSerializer
+from .lock_status_serializers import LockStatusSerializer
