@@ -110,6 +110,11 @@ export const tokenValidate = async () =>{
   return fetch(url,{method:"POST",headers:{'Content-Type':'Application/json',},body: JSON.stringify(Token)}).then(response => response.json() )
 }
 
+export const productFilters = async () =>{
+  const url = Urls.productFilters
+  const Token = getUserauth()
+  return fetch(url,{method:"GET", headers: { Authorization: 'Bearer ' + Token }}).then(response => response.json() )
+}
 
 
 
