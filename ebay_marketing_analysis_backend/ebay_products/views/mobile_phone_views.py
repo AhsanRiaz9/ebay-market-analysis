@@ -24,25 +24,47 @@ class MobilePhoneListView(APIView, CutstomPagination):
         if date_range:
             date_range = date_range.split(' to ')
             start_date = date_range[0]
-            queryset = queryset.filter(sold_date__gte=start_date)
+            if data_category == 'Active':
+                queryset = queryset.filter(created_at__gte=start_date)
+            else:
+                queryset = queryset.filter(sold_date__gte=start_date)
             if len(date_range) == 2:
                 end_date = date_range[1]
-                queryset = queryset.filter(sold_date__lte=end_date)
+                if data_category == 'Active':
+                    queryset = queryset.filter(created_at__lte=end_date)
+                else:
+                    queryset = queryset.filter(sold_date__lte=end_date)
         min_price = params.get('minPrice','')
         max_price = params.get('maxPrice','')
         if min_price:
             queryset = queryset.filter(sold_price__gte=min_price)
         if max_price:
             queryset = queryset.filter(sold_price__lte=max_price)
-        condition = params.get('condition','')
-        if condition:
-            condition = Condition.objects.filter(ebay_condition_id=condition).first()
-            queryset = queryset.filter(condition=condition)
+        conditions = params.get('conditions','')
+        if conditions:
+            conditions = conditions.split(',')
+            queryset = queryset.filter(condition__ebay_condition_id__in=conditions)
         excluded_phrase = params.get('excludedPhrase','')
         if excluded_phrase:
             excluded_words = excluded_phrase.split(',')
             for excluded_word in excluded_words:
                 queryset = queryset.exclude(title__icontains=excluded_word.lower().strip())
+        colors = params.get('colors', '')
+        if colors:
+            colors = colors.split(',')
+            queryset = queryset.filter(color__id__in=colors)
+        brands = params.get('brands', '')
+        if brands:
+            brands = brands.split(',')
+            queryset = queryset.filter(brand__id__in=brands)
+        storages = params.get('storages', '')
+        if storages:
+            storages = storages.split(',')
+            queryset = queryset.filter(storage__id__in=storages)
+        lock_statuses = params.get('lock_statuses', '')
+        if lock_statuses:
+            lock_statuses = lock_statuses.split(',')
+            queryset = queryset.filter(lock_status__id__in=lock_statuses)
         results = self.paginate_queryset(queryset, request, view=self)
         serializer = current_serializer(results, many=True)
         return self.get_paginated_response(serializer.data)
