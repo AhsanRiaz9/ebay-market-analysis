@@ -1,1 +1,1 @@
-from .mobile_phone_serializer import MobilePhoneSerializer
+from .mobile_phone_serializer import MobilePhoneSerializer, ActiveMobilePhoneSerializer

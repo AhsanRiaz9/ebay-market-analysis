@@ -461,7 +461,7 @@ class DownloadProductView(APIView):
                             mobile.ranking = rank_vaule
                             mobile.save()
                             continue
-                        mobile_phone = ActiveMobilePhone(title=title, price=sold_price, shipping_fee=shipping_fee, ebay_item_id=ebay_item_id, ranking=rank_vaule,
+                        mobile_phone = ActiveMobilePhone(title=title, sold_price=sold_price, shipping_fee=shipping_fee, ebay_item_id=ebay_item_id, ranking=rank_vaule,
                         product_url=product_url, image=image, category=category, product_model=product_model, brand=brand, color=color, storage=storage, lock_status=lock_status,
                         location=location, condition=condition)
                     mobile_phones_objects.append(mobile_phone)
