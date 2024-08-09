@@ -10,12 +10,23 @@ class MobilePhoneListView(APIView, MobilePhoneCustomPagination):
     def get(self, request, *args, **kwargs):
         params = self.request.GET
         data_category = params.get('dataCategory', 'Active')
+        sell_through = {'enabled' : False}
         if data_category == 'Active':
-            Model = ActiveMobilePhone
+            queryset = self.filter_mobile_phones(params, data_category, ActiveMobilePhone)
             current_serializer = ActiveMobilePhoneSerializer
         else:
-            Model = MobilePhone
+            queryset = self.filter_mobile_phones(params, data_category, MobilePhone)
+            active_mobile_phones = self.filter_mobile_phones(params, 'Active', ActiveMobilePhone)
             current_serializer = MobilePhoneSerializer
+            sell_through['enabled'] = True
+            sell_through['active_mobile_phones'] = active_mobile_phones
+        results = self.paginate_queryset(queryset, request, view=self)
+        serializer = current_serializer(results, many=True)
+        response = self.get_custom_paginated_response(serializer.data, queryset, sell_through)
+        return response
+
+
+    def filter_mobile_phones(self, params, data_category, Model):
         queryset = Model.objects.all().order_by('-created_at')
         title = params.get('title', '').lower().strip()
         if title:
@@ -65,9 +76,4 @@ class MobilePhoneListView(APIView, MobilePhoneCustomPagination):
         if lock_statuses:
             lock_statuses = lock_statuses.split(',')
             queryset = queryset.filter(lock_status__id__in=lock_statuses)
-        results = self.paginate_queryset(queryset, request, view=self)
-        serializer = current_serializer(results, many=True)
-        response = self.get_paginated_response(serializer.data, queryset)
-        
-        return response
-
+        return queryset
