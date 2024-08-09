@@ -2,10 +2,10 @@ from rest_framework.generics import ListAPIView
 from rest_framework.views import APIView
 from ebay_products.serializers import MobilePhoneSerializer, ActiveMobilePhoneSerializer
 from ebay_products.models import MobilePhone, ActiveMobilePhone
-from ebay_products.utilis.paginations import CutstomPagination
+from ebay_products.utilis.paginations import MobilePhoneCustomPagination
 from product_configuration.models import Condition
 
-class MobilePhoneListView(APIView, CutstomPagination):
+class MobilePhoneListView(APIView, MobilePhoneCustomPagination):
     
     def get(self, request, *args, **kwargs):
         params = self.request.GET
@@ -67,6 +67,7 @@ class MobilePhoneListView(APIView, CutstomPagination):
             queryset = queryset.filter(lock_status__id__in=lock_statuses)
         results = self.paginate_queryset(queryset, request, view=self)
         serializer = current_serializer(results, many=True)
-        return self.get_paginated_response(serializer.data)
+        response = self.get_paginated_response(serializer.data, queryset)
         
+        return response
 
