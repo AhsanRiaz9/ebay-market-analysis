@@ -42,7 +42,7 @@ class MobilePhoneCustomPagination(CutstomPagination):
         extra_output['analytics'] = self.get_price_anlytics(queryset)
         if sell_through['enabled'] == True:
             active_mobile_phones = sell_through['active_mobile_phones']
-            if queryset:
+            if active_mobile_phones:
                 sell_through = (queryset.count() / active_mobile_phones.count()) * 100.0
             else:
                 sell_through = 0.0
