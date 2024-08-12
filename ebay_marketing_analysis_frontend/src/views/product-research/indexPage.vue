@@ -444,7 +444,7 @@ export default {
   setup() {
     const searchKeyword = ref('')
     const currentPage = ref(1)
-    const rowsPerPage = ref(10)
+    const rowsPerPage = ref(30)
     const results = ref('')
     const total = ref(0)
     const records = ref(0)
@@ -662,7 +662,12 @@ export default {
     ])
     const current_change = async (page_number) => {
       currentPage.value = page_number
-      await callProducts(page_number).then((data) => {
+      let dataCopy = { ...data.value } || false
+          for (let x in dataCopy) {
+            if (dataCopy[x] == null) {
+              dataCopy[x] = ''
+            }}
+      await callProducts(page_number,dataCopy).then((data) => {
         results.value = data.results
         total.value = data.total_pages
         loading.value = false
