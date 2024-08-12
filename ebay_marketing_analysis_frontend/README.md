@@ -84,6 +84,10 @@ Built ideally for developers, designers, and startups, or Creators, Hope UI brin
   - [Follow Us](#follow-us)
   - [Licensing](#licensing)
 
+
+<!-- node version --v20.12.2 -->
+<!-- npm version --v10.5.0 -->
+
 ## Quick Start
 
 You can use following method to get started with CSS and JS files of the design system.
