@@ -36,7 +36,7 @@
             <h6 class="fw-semibold">Data Category</h6>
             <exclamation-circle-icon />
           </div>
-          <v-select clearable class="selectinput" v-model="data.dataCategory" label="Select Shipping location" :items="['Active', 'Sold']" variant="underlined" @update:modelValue="callproductsApi"></v-select>
+          <v-select class="selectinput" v-model="data.dataCategory" label="Select Shipping location" :items="['Active', 'Sold']" variant="underlined" @update:modelValue="callproductsApi"></v-select>
         </div>
       </div>
       <div class="col-lg-4 col-md-6 col-sm-12 col-xl-3">
@@ -86,72 +86,78 @@
             <h6 class="fw-semibold">{{ index }}</h6>
             <exclamation-circle-icon />
           </div>
-          <v-autocomplete multiple v-model="data[index]"  @update:modelValue="callproductsApi" class="selectinput" clearable :label="index" :items="item && item?.map((items) => ({ name: items?.name || items?.value, id: items?.ebay_condition_id || items?.id }))" item-title="name" item-value="id" variant="underlined"></v-autocomplete>
+          <v-autocomplete multiple v-model="data[index]" @update:modelValue="callproductsApi" class="selectinput" clearable :label="index" :items="item && item?.map((items) => ({ name: items?.name || items?.value, id: items?.ebay_condition_id || items?.id }))" item-title="name" item-value="id" variant="underlined"></v-autocomplete>
         </div>
       </div>
-      <div v-if="data.dataCategory == 'Active'" class="w-100 stats p-3 d-flex justify-content-evenly">
+      <div v-if="data.dataCategory == 'Active'" class="w-100 position-relative rounded-3 stats p-4 d-flex justify-content-evenly">
+        <div v-if="loading" class="skeleton d-flex"></div>
         <div class="d-flex gap-3">
           <div>
-            <h6>AU$ 2,458.93</h6>
+            <h5>AU$ {{analytics?.avg_price?.toFixed(2)}}</h5>
             <p>Avg. listing price</p>
           </div>
           <div>
-            <h6>AU $1,245 - AU $3,559</h6>
+            <h5>AU ${{ analytics?.min_price }} - AU ${{analytics?.max_price}}</h5>
             <p>listing price range</p>
           </div>
         </div>
         <div class="vertical-line"></div>
         <div class="d-flex gap-3">
           <div>
-            <h6>AU$ 2,458.93</h6>
+            <h5>AU$ {{analytics?.avg_postage?.toFixed(2)}}</h5>
             <p>Avg. postage</p>
           </div>
           <div>
-            <h6>95%</h6>
+            <h5>{{analytics?.free_postage?.toFixed(0)}}%</h5>
             <p>Free postage</p>
           </div>
         </div>
         <div class="vertical-line"></div>
         <div class="d-flex gap-3">
           <div>
-            <h6>61</h6>
+            <h5>{{ records }}</h5>
             <p>Total active listing</p>
           </div>
         </div>
       </div>
-      <div v-if="data.dataCategory == 'Sold'" class="w-100 stats p-3 d-flex justify-content-evenly">
+      <div v-if="data.dataCategory == 'Sold'" class="w-100 position-relative rounded-3 stats p-4 d-flex justify-content-evenly">
+      <div v-if="loading" class="skeleton d-flex"></div>
         <div class="d-flex gap-3">
           <div>
-            <h6>AU$ 2,458.89</h6>
+            <h5>AU$ {{ analytics?.avg_price?.toFixed(2) }}</h5>
             <p>Avg. listing price</p>
           </div>
           <div>
-            <h6>AU $1,245 - AU $3,559</h6>
+            <h5>AU$ {{ analytics?.min_price }} - AU$ {{ analytics?.max_price }}</h5>
             <p>listing price range</p>
           </div>
         </div>
         <div class="vertical-line"></div>
         <div class="d-flex gap-3">
           <div>
-            <h6>AU$ 2,458.93</h6>
+            <h5>AU$ {{ analytics?.avg_postage?.toFixed(0) }}</h5>
             <p>Avg. postage</p>
           </div>
           <div>
-            <h6>95%</h6>
+            <h5>{{analytics?.free_postage}} %</h5>
             <p>Free postage</p>
           </div>
         </div>
         <div class="vertical-line"></div>
         <div class="d-flex gap-3">
           <div>
-            <h6>61</h6>
+            <h5>{{records}}</h5>
             <p>Total active listing</p>
           </div>
+          <div>
+            <h5>{{analytics?.sell_through?.toFixed(2)}} %</h5>
+            <p>Sell through rate</p>
+          </div>
         </div>
+
       </div>
 
       <div class="py-3" style="background-color: white">
-        <div class="fw-bold">Total count : {{ records }} items</div>
         <KTDatatable :enable-items-per-page-dropdown="true" :table-data="results ? results : []" :table-header="headerConfig" :loading="loading" :total="total" :rowsPerPage="rowsPerPage" :currentPage="currentPage" @current-change="current_change" @items-per-page-change="items_per_page_change">
           <template v-slot:cell-title="{ row: product }">
             <a :href="product.product_url" target="_blank">{{ product.title }}</a>
@@ -159,6 +165,9 @@
 
           <template v-slot:cell-image="{ row: product }">
             <img :src="product.image" alt="product_image" width="100" height="100" />
+          </template>
+          <template v-slot:cell-ebay_item_id="{ row: product }">
+            <a :href="product.product_url" target="_blank">{{ product.ebay_item_id }}</a>
           </template>
         </KTDatatable>
       </div>
@@ -442,6 +451,7 @@ export default {
     const loading = ref(false)
     const date = ref('')
     const productfilter = ref([])
+    const analytics = ref('')
     const filterNames = ref([])
     const custom_shortcuts = [
       { key: 'thisWeek', label: 'This week', value: 'isoWeek' },
@@ -451,7 +461,7 @@ export default {
       { key: 'last90Days', label: 'Last 90 days', value: 90 }
     ]
     const data = ref({
-      searchData: searchKeyword?.value,
+      title: searchKeyword?.value,
       name: 'ebay.com.au',
       shippingLocation: 'Australia',
       excludedPhrase: null,
@@ -463,11 +473,13 @@ export default {
       colors: null,
       brands: null,
       storages: null,
-      lock_statuses: null
+      lock_statuses: null,
+      page_size : rowsPerPage?.value
     })
 
     let timeout
     async function callproductsApi() {
+      loading.value = true
       clearTimeout(timeout)
       timeout = setTimeout(async () => {
         try {
@@ -482,6 +494,8 @@ export default {
               results.value = data.results
               total.value = data.total_pages
               records.value = data.total_records
+              rowsPerPage.value = data.page_size
+              analytics.value = data.analytics
             }
             loading.value = false
           })
@@ -498,14 +512,14 @@ export default {
       timeeout = setTimeout(() => {
         if (!searchKeyword.value.startsWith(' ')) {
           let filter = searchKeyword.value.trim()
-          if (data.value.searchData != filter) {
-            data.value.searchData = filter
+          if (data.value.title != filter) {
+            data.value.title = filter
             callproductsApi()
           }
         } else {
           let filter = searchKeyword.value.trim()
-          if (data.value.searchData != filter) {
-            data.value.searchData = filter
+          if (data.value.title != filter) {
+            data.value.title = filter
             callproductsApi()
           }
         }
@@ -546,7 +560,12 @@ export default {
       loading.value = true
       try {
         const response = await productFilters()
-        if (response) {
+        if(!response.ok){
+          toast.error('Session has expired, Please login again',{
+            autoClose:6000
+          })
+        }
+        else {
           productfilter.value = response
           filterNames.value.push(...Object.keys(response))
         }
@@ -558,12 +577,13 @@ export default {
           results.value = data.results
           total.value = data.total_pages
           records.value = data.total_records
+          rowsPerPage.value = data.page_size
+          analytics.value = data.analytics
           loading.value = false
         })
       } catch (err) {
         loading.value = false
-      }
-      finally {
+      } finally {
         loading.value = false
       }
     })
@@ -646,6 +666,8 @@ export default {
 
     const items_per_page_change = (items_per_page) => {
       rowsPerPage.value = items_per_page
+      data.value.page_size = items_per_page
+      callproductsApi()
     }
 
     return {
@@ -667,20 +689,30 @@ export default {
       changeDateformat,
       date,
       productfilter,
-      filterNames
+      filterNames,
+      analytics
     }
   }
 }
 </script>
 
 <style scoped>
-
-
-.stats{
-  background: #b2bdf3;
+.skeleton{
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  backdrop-filter: blur(2px);
+  border-radius: 14px;
 }
 
-.vertical-line{
+.stats {
+  background: #f1f1f2;
+}
+p{
+  margin-bottom:0px;
+}
+.vertical-line {
   width: 2px;
   height: 100%;
   background-color: black;
