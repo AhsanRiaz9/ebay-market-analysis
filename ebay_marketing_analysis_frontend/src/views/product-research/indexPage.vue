@@ -560,7 +560,7 @@ export default {
       loading.value = true
       try {
         const response = await productFilters()
-        if(!response.ok){
+        if(response.detail){
           toast.error('Session has expired, Please login again',{
             autoClose:6000
           })
@@ -647,6 +647,11 @@ export default {
       {
         name: 'Sold Date',
         key: 'sold_date',
+        sortable: false
+      },
+      {
+        name: 'Ranking',
+        key:'ranking',
         sortable: false
       },
       {
