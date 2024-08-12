@@ -484,7 +484,7 @@ router.beforeEach(async(to,from,next)=>{
     token = store.getters.accesstoken
   }
 
-  if(token){
+  if(token){  
     decoded = jwtDecode(token);
   }
   if(decoded){
@@ -496,7 +496,6 @@ router.beforeEach(async(to,from,next)=>{
     if(token) {
     if(routess.some(i=> i == to.path)){
       const validate = AdminRoutes.find(i=> i.path == to.path)
-      console.log(decoded)
       let check = await checkRoute(decoded,validate.module,validate.loadpermission)
       if(check){
         next()

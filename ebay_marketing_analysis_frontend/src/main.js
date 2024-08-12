@@ -23,7 +23,7 @@ import Vue3Toasity from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
-
+import 'vue-ctk-date-time-picker/dist/vue-ctk-date-time-picker.css';
 require('waypoints/lib/noframework.waypoints.min')
 
 const app = createApp(App)

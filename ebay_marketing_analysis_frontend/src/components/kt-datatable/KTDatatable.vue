@@ -1,5 +1,5 @@
 <template>
-  <div class="dataTables_wrapper dt-bootstrap4 no-footer">
+  <div class="dataTables_wrapper dt-bootstrap4 no-footer position-relative">
     <div class="table-responsive">
       <div class="row w-100 justify-content-end py-1">
       <div
@@ -11,7 +11,7 @@
           :page-size="pagination.rowsPerPage"
           @current-change="currentPageChange"
           layout="prev, pager, next"
-          :total='total*10'
+          :total='total*rowsPerPage'
           background
         >
         </el-pagination>
@@ -88,10 +88,10 @@
         </tbody>
         <div
           v-if="loading"
-          class="overlay-layer card-rounded bg-opacity-5"
+          class="overlay-layer loader card-rounded bg-opacity-5"
         >
         <!-- bg-dark -->
-          <div class="spinner-border text-primary mx-auto" role="status">
+          <div class="spinner-border spin-load text-primary mx-auto" role="status">
             <span class="visually-hidden">Loading...</span>
           </div>
         </div>
@@ -112,19 +112,14 @@
             ><select
               name="kt_customers_table_length"
               class="form-select form-select-sm form-select-solid"
-              @change="setItemsPerPage"
-            >
+              :value="rowsPerPage"
+              @change="setItemsPerPage">
+                
               <option value="10">10</option>
-              <option value="25">25</option>
+              <option value="30">30</option>
               <option value="50">50</option>
               <option value="100">100</option>
-              <option value="500">500</option>
-              <option value="1000">1000</option>
-              <option value="2000">2000</option>
-              <option value="3000">3000</option>
-              <option value="4000">4000</option>
-              <option value="5000">5000</option>
-              <option value="10000">10000</option>
+
             </select></label
           >
         </div>
@@ -136,7 +131,7 @@
       v-model:current-page="pagination.page"
       :page-size="pagination.rowsPerPage"
       @current-change="currentPageChange"
-          :total="total*10"
+          :total="total*rowsPerPage"
           layout="prev, pager, next"
           background
         >
@@ -237,6 +232,7 @@ export default defineComponent({
 
     const setItemsPerPage = (event) => {
       emit("items-per-page-change", parseInt(event.target.value));
+
     };
 
     return {
@@ -302,4 +298,20 @@ div.dataTables_wrapper div.dataTables_processing {
   top: 50%;
   left: 50%;
 }
+.loader{
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(5px)  ;
+  position: absolute;
+  top: 0;
+}
+.spin-load{
+width: 100px;
+height: 100px;
+font-size: xx-large;
+position: relative;
+top: 50%;
+left: 50%;
+}
+
 </style>

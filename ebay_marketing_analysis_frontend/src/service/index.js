@@ -98,6 +98,25 @@ return await fetch(url+value+'&'+ new URLSearchParams(data).toString(),{method:'
 }
 
 
+export const getConditions = async () => {
+  const url = Urls.conditions
+  const Token = getUserauth()
+  return fetch(url, { method: 'GET', headers: { Authorization: 'Bearer ' + Token } }).then((response) => response.json())
+}
+
+export const tokenValidate = async () =>{
+  const url = Urls.tokenValidate
+  const Token = getUserauth()
+  return fetch(url,{method:"POST",headers:{'Content-Type':'Application/json',},body: JSON.stringify(Token)}).then(response => response.json() )
+}
+
+export const productFilters = async () =>{
+  const url = Urls.productFilters
+  const Token = getUserauth()
+  return fetch(url,{method:"GET", headers: { Authorization: 'Bearer ' + Token }}).then(response => response.json() )
+}
+
+
 
 // try{
 //   let dataCopy = {...data.value} || false

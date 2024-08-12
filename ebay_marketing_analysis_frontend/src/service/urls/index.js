@@ -14,6 +14,9 @@ const addPermissions = baseUrl + 'permissions/'
 const deletePermissions = baseUrl + 'permissions/'
 const modulePermissions = baseUrl + 'permissions/'
 const ebay_products = baseUrl + 'ebay_products/mobile_phones/?page='
+const conditions = baseUrl + 'product_configuration/conditions/'
+const tokenValidate = baseUrl + 'api/token/validate/'
+const productFilters = baseUrl + 'product_configuration/product_filters/'
 
 
 const URLS = {
@@ -30,7 +33,10 @@ const URLS = {
     userSignup,
     getModules,
     roles,
-    ebay_products
+    ebay_products,
+    conditions,
+    tokenValidate,
+    productFilters
 }
 
 export default URLS

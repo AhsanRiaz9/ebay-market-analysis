@@ -4,7 +4,7 @@
       <router-link :to="{ name: 'default.dashboard' }" class="navbar-brand">
         <!-- <brand-logo></brand-logo> -->
         <h5 class="logo-title m-0" data-setting="app_name">
-         Ebay Pricing Tool
+         OZ Pricing Tool
         </h5>
       </router-link>
       <div class="sidebar-toggle" @click="toggleSidebar">
