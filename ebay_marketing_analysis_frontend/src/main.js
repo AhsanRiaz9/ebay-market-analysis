@@ -9,7 +9,7 @@ import VueApexCharts from 'vue3-apexcharts'
 import BootstrapVue3 from 'bootstrap-vue-3'
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
-import CounterUp from 'vue3-autocounter'
+// import CounterUp from 'vue3-autocounter'
 import '@mdi/font/css/materialdesignicons.css';
 import 'aos/dist/aos.css'
 import 'vuetify/styles'
@@ -39,7 +39,7 @@ app.use(Vue3Toasity);
 app.use(VueSweetalert2)
 app.use(VueApexCharts)
 app.use(BootstrapVue3)
-app.component('counter-up', CounterUp)
+// app.component('counter-up', CounterUp)
 
 // Custom Components & Directives
 app.use(globalComponent)

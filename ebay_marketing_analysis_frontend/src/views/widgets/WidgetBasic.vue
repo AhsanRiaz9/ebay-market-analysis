@@ -6,7 +6,7 @@
           <div class="text-center">AVG Impressions</div>
           <div class="d-flex align-items-center justify-content-between mt-3">
             <div>
-              <h2><Vue3autocounter ref="counter" :startAmount="0" :endAmount="2648" /></h2>
+              <!-- <h2><Vue3autocounter ref="counter" :startAmount="0" :endAmount="2648" /></h2> -->
               26.84%
             </div>
             <div class="border bg-soft-danger rounded p-3">
@@ -27,7 +27,7 @@
           <div class="text-center">AVG Engagements Rate</div>
           <div class="d-flex align-items-center justify-content-between mt-3">
             <div>
-              <h2><Vue3autocounter ref="counter" :startAmount="0" :endAmount="2648" /></h2>
+              <!-- <h2><Vue3autocounter ref="counter" :startAmount="0" :endAmount="2648" /></h2> -->
               26.84%
             </div>
             <div class="border bg-soft-info rounded p-3">
@@ -48,7 +48,7 @@
           <div class="text-center">AVG Reach</div>
           <div class="d-flex align-items-center justify-content-between mt-3">
             <div>
-              <h2><Vue3autocounter ref="counter" :startAmount="0" :endAmount="2648" /></h2>
+              <!-- <h2><Vue3autocounter ref="counter" :startAmount="0" :endAmount="2648" /></h2> -->
               26.84%
             </div>
             <div class="border bg-soft-success rounded p-3">
@@ -69,7 +69,7 @@
           <div class="text-center">AVG Transport</div>
           <div class="d-flex align-items-center justify-content-between mt-3">
             <div>
-              <h2><Vue3autocounter ref="counter" :startAmount="0" :endAmount="2648" /></h2>
+              <!-- <h2><Vue3autocounter ref="counter" :startAmount="0" :endAmount="2648" /></h2> -->
               26.84%
             </div>
             <div class="border bg-soft-primary rounded p-3">
@@ -95,7 +95,7 @@
               </svg>
             </div>
             <div class="text-end">
-              <h2><Vue3autocounter ref="counter" :startAmount="0" :endAmount="5600" /></h2>
+              <!-- <h2><Vue3autocounter ref="counter" :startAmount="0" :endAmount="5600" /></h2> -->
               Doctors
             </div>
           </div>
@@ -111,7 +111,7 @@
               </svg>
             </div>
             <div class="text-end">
-              <h2><Vue3autocounter ref="counter" :startAmount="0" :endAmount="5600" /></h2>
+              <!-- <h2><Vue3autocounter ref="counter" :startAmount="0" :endAmount="5600" /></h2> -->
               Nurses
             </div>
           </div>
@@ -129,7 +129,7 @@
               </svg>
             </div>
             <div class="text-end">
-              <h2><Vue3autocounter ref="counter" :startAmount="0" :endAmount="3500" /></h2>
+              <!-- <h2><Vue3autocounter ref="counter" :startAmount="0" :endAmount="3500" /></h2> -->
               Patients
             </div>
           </div>
@@ -145,7 +145,7 @@
               </svg>
             </div>
             <div class="text-end">
-              <h2><Vue3autocounter ref="counter" :startAmount="0" :endAmount="4500" /></h2>
+              <!-- <h2><Vue3autocounter ref="counter" :startAmount="0" :endAmount="4500" /></h2> -->
               Pharmacists
             </div>
           </div>
@@ -166,7 +166,7 @@
             </div>
             <div class="text-end">
               Customers
-              <h2><Vue3autocounter ref="counter" :startAmount="0" :endAmount="75" /></h2>
+              <!-- <h2><Vue3autocounter ref="counter" :startAmount="0" :endAmount="75" /></h2> -->
             </div>
           </div>
         </b-card>
@@ -182,7 +182,7 @@
             </div>
             <div class="text-end">
               Products
-              <h2><Vue3autocounter ref="counter" :startAmount="0" :endAmount="60" /></h2>
+              <!-- <h2><Vue3autocounter ref="counter" :startAmount="0" :endAmount="60" /></h2> -->
             </div>
           </div>
         </b-card>
@@ -198,7 +198,7 @@
             </div>
             <div class="text-end">
               User
-              <h2><Vue3autocounter ref="counter" :startAmount="0" :endAmount="80" /></h2>
+              <!-- <h2><Vue3autocounter ref="counter" :startAmount="0" :endAmount="80" /></h2> -->
             </div>
           </div>
         </b-card>
@@ -214,7 +214,7 @@
             </div>
             <div class="text-end">
               Category
-              <h2><Vue3autocounter ref="counter" :startAmount="0" :endAmount="45" /></h2>
+              <!-- <h2><Vue3autocounter ref="counter" :startAmount="0" :endAmount="45" /></h2> -->
             </div>
           </div>
         </b-card>
@@ -250,7 +250,7 @@
               <span>Worked Issue</span>
             </div>
             <div>
-              <span><Vue3autocounter ref="counter" :startAmount="0" :endAmount="1200" /></span>
+              <!-- <span><Vue3autocounter ref="counter" :startAmount="0" :endAmount="1200" /></span> -->
             </div>
           </div>
         </b-card>
@@ -262,7 +262,7 @@
               <span>Worked Income</span>
             </div>
             <div>
-              <span>$<Vue3autocounter ref="counter" :startAmount="0" :endAmount="54000" /></span>
+              <!-- <span>$<Vue3autocounter ref="counter" :startAmount="0" :endAmount="54000" /></span> -->
             </div>
           </div>
         </b-card>
@@ -302,7 +302,7 @@
               </svg>
             </div>
             <div>
-              <h1><Vue3autocounter ref="counter" :startAmount="0" :endAmount="250" />M</h1>
+              <!-- <h1><Vue3autocounter ref="counter" :startAmount="0" :endAmount="250" />M</h1> -->
               <p class="text-success mb-0">Total Earning</p>
             </div>
           </div>
@@ -342,7 +342,7 @@
       </b-col>
       <b-col lg="4">
         <b-card>
-          <h2>$<Vue3autocounter ref="counter" :startAmount="0" :endAmount="3450" /></h2>
+          <!-- <h2>$<Vue3autocounter ref="counter" :startAmount="0" :endAmount="3450" /></h2> -->
           <p class="mb-2">Your Current Balance</p>
           <h6>20% ($520)</h6>
           <a href="#" class="mt-4 btn btn-danger d-block rounded">Add credit</a>
@@ -408,7 +408,7 @@
                 <div class="mt-3">
                   <span>CUSTOMER</span>
                   <div>
-                    <h3><Vue3autocounter ref="counter" :startAmount="0" :endAmount="60586" /></h3>
+                    <!-- <h3><Vue3autocounter ref="counter" :startAmount="0" :endAmount="60586" /></h3> -->
                   </div>
                 </div>
                 <div class="mt-3">
@@ -437,7 +437,7 @@
                 <div class="mt-3">
                   <span>SALES</span>
                   <div>
-                    <h3><Vue3autocounter ref="counter" :startAmount="0" :endAmount="80586" /></h3>
+                    <!-- <h3><Vue3autocounter ref="counter" :startAmount="0" :endAmount="80586" /></h3> -->
                   </div>
                 </div>
                 <div class="mt-3">
@@ -470,7 +470,7 @@
                 <div class="mt-3">
                   <span>PROFIT</span>
                   <div>
-                    <h3><Vue3autocounter ref="counter" :startAmount="0" :endAmount="80" />%</h3>
+                    <!-- <h3><Vue3autocounter ref="counter" :startAmount="0" :endAmount="80" />%</h3> -->
                   </div>
                 </div>
                 <div class="mt-3">
@@ -501,7 +501,7 @@
                 <div class="mt-3">
                   <span>LOSS</span>
                   <div>
-                    <h3><Vue3autocounter ref="counter" :startAmount="0" :endAmount="15" />%</h3>
+                    <!-- <h3><Vue3autocounter ref="counter" :startAmount="0" :endAmount="15" />%</h3> -->
                   </div>
                 </div>
                 <div class="mt-3">
@@ -521,21 +521,21 @@
         <b-card no-body class="p-3">
           <h5>Assets</h5>
           <div class="text-center">
-            <h1>-<Vue3autocounter ref="counter" :startAmount="0" :endAmount="1056" />K</h1>
+            <!-- <h1>-<Vue3autocounter ref="counter" :startAmount="0" :endAmount="1056" />K</h1> -->
             <p class="mb-0">Lorem ipsum dolor sit amet</p>
           </div>
         </b-card>
         <b-card no-body class="p-3">
           <h5>Liabilities</h5>
           <div class="text-center">
-            <h1>-<Vue3autocounter ref="counter" :startAmount="0" :endAmount="4252" />K</h1>
+            <!-- <h1>-<Vue3autocounter ref="counter" :startAmount="0" :endAmount="4252" />K</h1> -->
             <p class="mb-0">Lorem ipsum dolor sit amet</p>
           </div>
         </b-card>
         <b-card no-body class="p-3">
           <h5>Working Capital</h5>
           <div class="text-center">
-            <h1>-<Vue3autocounter ref="counter" :startAmount="0" :endAmount="3804" />K</h1>
+            <!-- <h1>-<Vue3autocounter ref="counter" :startAmount="0" :endAmount="3804" />K</h1> -->
             <p class="mb-0">Lorem ipsum dolor sit amet</p>
           </div>
         </b-card>
@@ -550,7 +550,7 @@
                 <div>
                   <span><b>Revenue</b></span>
                   <div class="mt-2">
-                    <h2>$<Vue3autocounter ref="counter" :startAmount="0" :endAmount="35000" /></h2>
+                    <!-- <h2>$<Vue3autocounter ref="counter" :startAmount="0" :endAmount="35000" /></h2> -->
                   </div>
                 </div>
                 <div>
@@ -579,7 +579,7 @@
                   <div>
                     <span><b>Orders</b></span>
                     <div class="mt-2">
-                      <h2><Vue3autocounter ref="counter" :startAmount="0" :endAmount="2500" /></h2>
+                      <!-- <h2><Vue3autocounter ref="counter" :startAmount="0" :endAmount="2500" /></h2> -->
                     </div>
                   </div>
                   <div>
@@ -611,7 +611,7 @@
                   <div>
                     <span><b>Leads</b></span>
                     <div class="mt-2">
-                      <h2>$<Vue3autocounter ref="counter" :startAmount="0" :endAmount="35000" /></h2>
+                      <!-- <h2>$<Vue3autocounter ref="counter" :startAmount="0" :endAmount="35000" /></h2> -->
                     </div>
                   </div>
                   <div>
@@ -640,7 +640,7 @@
                 <div>
                   <span><b>Conversion</b></span>
                   <div class="mt-2">
-                    <h2><Vue3autocounter ref="counter" :startAmount="0" :endAmount="35" />%</h2>
+                    <!-- <h2><Vue3autocounter ref="counter" :startAmount="0" :endAmount="35" />%</h2> -->
                   </div>
                 </div>
                 <div>
@@ -652,7 +652,7 @@
                   <span>This Month</span>
                 </div>
                 <div>
-                  <span><Vue3autocounter ref="counter" :startAmount="0" :endAmount="30" />%</span>
+                  <!-- <span><Vue3autocounter ref="counter" :startAmount="0" :endAmount="30" />%</span> -->
                 </div>
               </div>
               <div class="mt-3">
@@ -681,7 +681,7 @@
           </div>
           <div class="d-flex justify-content-between mt-3">
             <div>
-              <h2><Vue3autocounter ref="counter" :startAmount="0" :endAmount="4500" /></h2>
+              <!-- <h2><Vue3autocounter ref="counter" :startAmount="0" :endAmount="4500" /></h2> -->
               <div>Operations</div>
             </div>
             <div>
@@ -695,11 +695,11 @@
   </div>
 </template>
 <script>
-import Vue3autocounter from 'vue3-autocounter'
+// import Vue3autocounter from 'vue3-autocounter'
 export default {
   name: 'WidgetBasic',
   components: {
-    Vue3autocounter
+    // Vue3autocounter
   }
 }
 </script>

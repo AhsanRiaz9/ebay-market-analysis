@@ -44,7 +44,7 @@
               </div>
             </div>
             <div class="text-center">
-              <h2><Vue3autocounter ref="counter" :startAmount="0" :endAmount="65" />M</h2>
+              <!-- <h2><Vue3autocounter ref="counter" :startAmount="0" :endAmount="65" />M</h2> -->
               <div>
                 <span>
                   <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 20 20" fill="currentColor">
@@ -73,7 +73,7 @@
               </div>
             </div>
             <div class="text-center">
-              <h2><Vue3autocounter ref="counter" :startAmount="0" :endAmount="966" />K</h2>
+              <!-- <h2><Vue3autocounter ref="counter" :startAmount="0" :endAmount="966" />K</h2> -->
               <div>
                 <span>
                   <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 20 20" fill="currentColor">
@@ -102,7 +102,7 @@
               </div>
             </div>
             <div class="text-center">
-              <h2><Vue3autocounter ref="counter" :startAmount="0" :endAmount="155" />K</h2>
+              <!-- <h2><Vue3autocounter ref="counter" :startAmount="0" :endAmount="155" />K</h2> -->
               <div>
                 <span class="text-danger">
                   <svg xmlns="http://www.w3.org/2000/svg" width="10px" height="10px" viewBox="0 0 20 20" fill="currentColor">
@@ -133,7 +133,7 @@
           </div>
           <div class="d-flex justify-content-between align-items-center">
             <h6>
-              <b>$<Vue3autocounter ref="counter" :startAmount="0" :endAmount="18378" /></b>
+              <!-- <b>$<Vue3autocounter ref="counter" :startAmount="0" :endAmount="18378" /></b> -->
             </h6>
             <div id="iq-chart-box1"></div>
             <div class="d-flex align-items-center text-primary">
@@ -159,7 +159,7 @@
           </div>
           <div class="d-flex justify-content-between align-items-center">
             <h6>
-              <b>$<Vue3autocounter ref="counter" :startAmount="0" :endAmount="190" /></b>
+              <!-- <b>$<Vue3autocounter ref="counter" :startAmount="0" :endAmount="190" /></b> -->
             </h6>
             <div id="iq-chart-box2"></div>
             <div class="d-flex align-items-center text-danger">
@@ -185,7 +185,7 @@
           </div>
           <div class="d-flex justify-content-between align-items-center">
             <h6>
-              <b><Vue3autocounter ref="counter" :startAmount="0" :endAmount="45" /></b>
+              <!-- <b><Vue3autocounter ref="counter" :startAmount="0" :endAmount="45" /></b> -->
             </h6>
             <div id="iq-chart-box3"></div>
             <div class="d-flex align-items-center text-success">
@@ -213,7 +213,7 @@
           <div class="d-flex justify-content-between align-items-center">
             <div>
               <h6>
-                <b><Vue3autocounter ref="counter" :startAmount="0" :endAmount="60" /></b>
+                <!-- <b><Vue3autocounter ref="counter" :startAmount="0" :endAmount="60" /></b> -->
               </h6>
             </div>
             <div id="iq-chart-box4"></div>
@@ -247,7 +247,7 @@
                   <path fill="currentColor" d="M19 3H5A2 2 0 0 0 3 5V19A2 2 0 0 0 5 21H19A2 2 0 0 0 21 19V5A2 2 0 0 0 19 3M5 19V17H8.13A4.13 4.13 0 0 0 9.4 19M19 19H14.6A4.13 4.13 0 0 0 15.87 17H19M19 15H14V16A2 2 0 0 1 10 16V15H5V5H19Z" />
                 </svg>
               </div>
-              <h2><Vue3autocounter ref="counter" :startAmount="0" :endAmount="352" /></h2>
+              <!-- <h2><Vue3autocounter ref="counter" :startAmount="0" :endAmount="352" /></h2> -->
             </div>
             <div class="pt-3">
               <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" viewBox="0 0 20 20" fill="#344ed1">
@@ -276,7 +276,7 @@
                   <path fill="currentColor" d="M19.07,4.93L17.66,6.34C19.1,7.79 20,9.79 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12C4,7.92 7.05,4.56 11,4.07V6.09C8.16,6.57 6,9.03 6,12A6,6 0 0,0 12,18A6,6 0 0,0 18,12C18,10.34 17.33,8.84 16.24,7.76L14.83,9.17C15.55,9.9 16,10.9 16,12A4,4 0 0,1 12,16A4,4 0 0,1 8,12C8,10.14 9.28,8.59 11,8.14V10.28C10.4,10.63 10,11.26 10,12A2,2 0 0,0 12,14A2,2 0 0,0 14,12C14,11.26 13.6,10.62 13,10.28V2H12A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12C22,9.24 20.88,6.74 19.07,4.93Z" />
                 </svg>
               </div>
-              <h2>$<Vue3autocounter ref="counter" :startAmount="0" :endAmount="37" />K</h2>
+              <!-- <h2>$<Vue3autocounter ref="counter" :startAmount="0" :endAmount="37" />K</h2> -->
             </div>
             <div class="pt-3">
               <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" viewBox="0 0 20 20" fill="#b91d12">
@@ -305,7 +305,7 @@
                   <path fill="currentColor" d="M21.4 11.6L12.4 2.6C12 2.2 11.5 2 11 2H4C2.9 2 2 2.9 2 4V11C2 11.5 2.2 12 2.6 12.4L11.6 21.4C12 21.8 12.5 22 13 22C13.5 22 14 21.8 14.4 21.4L21.4 14.4C21.8 14 22 13.5 22 13C22 12.5 21.8 12 21.4 11.6M13 20L4 11V4H11L20 13M6.5 5C7.3 5 8 5.7 8 6.5S7.3 8 6.5 8 5 7.3 5 6.5 5.7 5 6.5 5M10.1 8.9L11.5 7.5L17 13L15.6 14.4L10.1 8.9M7.6 11.4L9 10L13 14L11.6 15.4L7.6 11.4Z" />
                 </svg>
               </div>
-              <h2><Vue3autocounter ref="counter" :startAmount="0" :endAmount="32" />%</h2>
+              <!-- <h2><Vue3autocounter ref="counter" :startAmount="0" :endAmount="32" />%</h2> -->
             </div>
             <div class="pt-3">
               <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" viewBox="0 0 20 20" fill="#07750b">
@@ -350,7 +350,7 @@
         <b-card body-class="iq-box-relative">
           <div class="iq-service d-flex align-items-center justify-content-between" style="position: relative">
             <div class="service-data">
-              <h3><Vue3autocounter ref="counter" :startAmount="0" :endAmount="24" />%</h3>
+              <!-- <h3><Vue3autocounter ref="counter" :startAmount="0" :endAmount="24" />%</h3> -->
               <p class="mb-0">Service used</p>
             </div>
             <apexchart height="80" type="area" :series="service1.series" :options="service1.options" />
@@ -599,10 +599,10 @@
   </div>
 </template>
 <script>
-import Vue3autocounter from 'vue3-autocounter'
+// import Vue3autocounter from 'vue3-autocounter'
 export default {
   components: {
-    Vue3autocounter
+    // Vue3autocounter
   },
   name: 'WidgetChart',
   mounted() {},
