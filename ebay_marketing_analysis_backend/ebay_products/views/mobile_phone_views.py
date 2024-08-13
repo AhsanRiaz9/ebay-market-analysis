@@ -39,7 +39,7 @@ class MobilePhoneListView(APIView, MobilePhoneCustomPagination):
                 queryset = queryset.filter(created_at__gte=start_date)
             else:
                 queryset = queryset.filter(sold_date__gte=start_date)
-            if len(date_range) == 2:
+            if len(date_range) == 2 and start_date != date_range[1]:
                 end_date = date_range[1]
                 if data_category == 'Active':
                     queryset = queryset.filter(created_at__lte=end_date)
