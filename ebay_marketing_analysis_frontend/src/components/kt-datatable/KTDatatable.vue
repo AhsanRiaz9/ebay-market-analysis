@@ -11,7 +11,7 @@
           :page-size="pagination.rowsPerPage"
           @current-change="currentPageChange"
           layout="prev, pager, next"
-          :total='total*rowsPerPage'
+          :page-count="total"
           background
         >
         </el-pagination>
@@ -114,7 +114,6 @@
               class="form-select form-select-sm form-select-solid"
               :value="rowsPerPage"
               @change="setItemsPerPage">
-                
               <option value="10">10</option>
               <option value="30">30</option>
               <option value="50">50</option>
@@ -131,7 +130,7 @@
       v-model:current-page="pagination.page"
       :page-size="pagination.rowsPerPage"
       @current-change="currentPageChange"
-          :total="total*rowsPerPage"
+          :page-count="total"
           layout="prev, pager, next"
           background
         >
@@ -159,7 +158,7 @@ export default defineComponent({
     loading: { type: Boolean, default: false },
     currentPage: { type: Number, default: 1 },
     enableItemsPerPageDropdown: { type: Boolean, default: true },
-    total: { type: Number, default: 0 },
+    total: { type: Number},
     rowsPerPage: { type: Number, default: 10 },
     order: { type: String, default: "asc" },
     sortLabel: { type: String, default: "" },

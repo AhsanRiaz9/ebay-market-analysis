@@ -158,7 +158,7 @@
       </div>
 
       <div class="py-3" style="background-color: white">
-        <KTDatatable :enable-items-per-page-dropdown="true" :table-data="results ? results : []" :table-header="headerConfig" :loading="loading" :total="total" :rowsPerPage="rowsPerPage" :currentPage="currentPage" @current-change="current_change" @items-per-page-change="items_per_page_change">
+        <KTDatatable :enable-items-per-page-dropdown="true" :table-data="results ? results : []" :table-header="headerConfig" :loading="loading" :total="total ?total : total " :rowsPerPage="rowsPerPage" :currentPage="currentPage" @current-change="current_change" @items-per-page-change="items_per_page_change">
           <template v-slot:cell-title="{ row: product }">
             <a :href="product.product_url" target="_blank">{{ product.title }}</a>
           </template>
@@ -435,7 +435,7 @@ import ExclamationCircleIcon from '@/components/icons/outlined/svg-icons/Exclama
 import KTDatatable from '@/components/kt-datatable/KTDatatable.vue'
 import { onMounted, ref } from 'vue'
 import SearchIcon from '@/components/icons/outlined/svg-icons/SearchIcon.vue'
-import { callProducts, productFilters } from '@/service'
+import { callProducts, productFilters} from '@/service'
 import { toast } from 'vue3-toastify'
 import VueCtkDateTimePicker from 'vue-ctk-date-time-picker'
 
@@ -444,7 +444,7 @@ export default {
   setup() {
     const searchKeyword = ref('')
     const currentPage = ref(1)
-    const rowsPerPage = ref(30)
+    const rowsPerPage = ref(10)
     const results = ref('')
     const total = ref(0)
     const records = ref(0)
@@ -478,7 +478,7 @@ export default {
     })
 
     let timeout
-    async function callproductsApi() {
+    async function callproductsApi(page_number=1) {
       loading.value = true
       clearTimeout(timeout)
       timeout = setTimeout(async () => {
@@ -489,7 +489,7 @@ export default {
               dataCopy[x] = ''
             }
           }
-          await callProducts(1, dataCopy).then((data) => {
+          await callProducts(page_number, dataCopy).then((data) => {
             if (data) {
               results.value = data.results
               total.value = data.total_pages
@@ -573,7 +573,13 @@ export default {
         console.log(err)
       }
       try {
-        await callProducts().then((data) => {
+        let dataCopy = { ...data.value } || false
+          for (let x in dataCopy) {
+            if (dataCopy[x] == null) {
+              dataCopy[x] = ''
+            }
+          }
+        await callProducts(undefined,dataCopy).then((data) => {
           results.value = data.results
           total.value = data.total_pages
           records.value = data.total_records
@@ -662,22 +668,15 @@ export default {
     ])
     const current_change = async (page_number) => {
       currentPage.value = page_number
-      let dataCopy = { ...data.value } || false
-          for (let x in dataCopy) {
-            if (dataCopy[x] == null) {
-              dataCopy[x] = ''
-            }}
-      await callProducts(page_number,dataCopy).then((data) => {
-        results.value = data.results
-        total.value = data.total_pages
-        loading.value = false
-      })
+      callproductsApi(page_number)
     }
 
     const items_per_page_change = (items_per_page) => {
       rowsPerPage.value = items_per_page
       data.value.page_size = items_per_page
-      callproductsApi()
+      loading.value = true
+      currentPage.value = 1
+      callproductsApi(currentPage.value)
     }
 
     return {
