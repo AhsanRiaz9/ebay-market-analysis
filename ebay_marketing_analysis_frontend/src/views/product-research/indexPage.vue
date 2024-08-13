@@ -466,7 +466,7 @@ export default {
       name: 'ebay.com.au',
       shippingLocation: 'Australia',
       excludedPhrase: null,
-      dateRange: null,
+      date_range: null,
       maxPrice: '',
       minPrice: '',
       conditions: null,
@@ -533,9 +533,9 @@ export default {
         let end = date.value.end || ''
         let dateJoin
         if (start && end) {
-          dateJoin = start.concat('-', end)
+          dateJoin = start.concat(' to ', end)
         }
-        data.value.dateRange = dateJoin || start
+        data.value.date_range = dateJoin || start
         callproductsApi()
       }
     }
