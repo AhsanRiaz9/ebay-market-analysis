@@ -1,6 +1,5 @@
 <template>
   <div>
-    {{currentPage}}
     <div class="w-100 p-2 rounded-2 d-flex align-items-center px-4 main-head" style="background-color: white">
       <div class="w-25"><p class="platform">eBay</p></div>
       <div class="w-50 d-flex align-items-center">
