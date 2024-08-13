@@ -17,6 +17,7 @@ class MobilePhone(models.Model):
     condition = models.ForeignKey(Condition, on_delete=models.SET_NULL, null=True)
     location = models.ForeignKey(Location, on_delete=models.SET_NULL, null=True)
     sold_date = models.DateField()
+    scraping_url = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 
 class ActiveMobilePhone(models.Model):
@@ -35,6 +36,7 @@ class ActiveMobilePhone(models.Model):
     condition = models.ForeignKey(Condition, on_delete=models.SET_NULL, null=True)
     location = models.ForeignKey(Location, on_delete=models.SET_NULL, null=True)
     ranking = models.BigIntegerField()
+    scraping_url = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 
 class ProductRankCounter(models.Model):

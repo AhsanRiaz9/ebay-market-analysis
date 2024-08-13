@@ -6,7 +6,7 @@ class MobilePhoneSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = MobilePhone
-        exclude = ('category', 'location', )
+        exclude = ('category', 'location', 'scraping_url')
     
     def to_representation(self, instance):
         response = super().to_representation(instance) 
@@ -25,7 +25,7 @@ class ActiveMobilePhoneSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = ActiveMobilePhone
-        exclude = ('category', 'location')
+        exclude = ('category', 'location', 'scraping_url')
     
     def to_representation(self, instance):
         response = super().to_representation(instance) 

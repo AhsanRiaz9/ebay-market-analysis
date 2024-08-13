@@ -442,15 +442,9 @@ class DownloadProductView(APIView):
                     if not lock_status:
                         lock_status = self.create_lock_status(filter_conditions['Lock Status'])
                     if mobile_process.is_sold_listing == True:
-                        mobile_exist = MobilePhone.objects.filter(product_url=product_url).first()
-                        if mobile_exist:
-                            # if sold product exist then stop the downloading the products
-                            print('Process stop due to repeated sold data.')
-                            data_available = False
-                            break
                         mobile_phone = MobilePhone(title=title, sold_price=sold_price, shipping_fee=shipping_fee, ebay_item_id=ebay_item_id,
                         product_url=product_url, image=image, category=category, product_model=product_model, brand=brand, color=color, storage=storage, lock_status=lock_status,
-                        location=location, condition=condition, sold_date=sold_date)
+                        location=location, condition=condition, sold_date=sold_date, scraping_url=encoded_url)
                     else:
                         rank_vaule += 1
                         mobile = ActiveMobilePhone.objects.filter(product_url=product_url).first()
@@ -463,7 +457,7 @@ class DownloadProductView(APIView):
                             continue
                         mobile_phone = ActiveMobilePhone(title=title, sold_price=sold_price, shipping_fee=shipping_fee, ebay_item_id=ebay_item_id, ranking=rank_vaule,
                         product_url=product_url, image=image, category=category, product_model=product_model, brand=brand, color=color, storage=storage, lock_status=lock_status,
-                        location=location, condition=condition)
+                        location=location, condition=condition, scraping_url=encoded_url)
                     mobile_phones_objects.append(mobile_phone)
                 next_btn = driver.find_elements(By.CSS_SELECTOR, 'a.pagination__next')
                 if next_btn:
