@@ -10,5 +10,8 @@ module.exports = defineConfig({
       enableInSFC: false
     }
   },
-  transpileDependencies: true
+  transpileDependencies: true,
+  devServer: {
+    headers: { "Access-Control-Allow-Origin": "*" }
+  }
 })
