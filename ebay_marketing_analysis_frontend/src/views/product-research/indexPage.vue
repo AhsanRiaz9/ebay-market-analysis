@@ -1,5 +1,6 @@
 <template>
   <div>
+  
     <div class="w-100 p-2 rounded-2 d-flex align-items-center px-4 main-head" style="background-color: white">
       <div class="w-25"><p class="platform">eBay</p></div>
       <div class="w-50 d-flex align-items-center">
@@ -16,7 +17,7 @@
             <h6 class="fw-semibold">Marketplace</h6>
             <exclamation-circle-icon />
           </div>
-          <v-select v-model="data.name" clearable class="selectinput" label="Select Marketplace" :items="['ebay.com.au']" @update:modelValue="callproductsApi" variant="underlined"></v-select>
+          <v-select v-model="data.name" clearable class="selectinput" label="Select Marketplace" :items="['ebay.com.au']" @update:modelValue="callproductsApi()" variant="underlined"></v-select>
         </div>
       </div>
       <div class="col-lg-4 col-md-6 col-sm-12 col-xl-3">
@@ -26,7 +27,7 @@
             <h6 class="fw-semibold">Shipping location</h6>
             <exclamation-circle-icon />
           </div>
-          <v-select clearable class="selectinput" v-model="data.shippingLocation" label="Select Shipping location" :items="['Australia']" variant="underlined" @update:modelValue="callproductsApi"></v-select>
+          <v-select clearable class="selectinput" v-model="data.shippingLocation" label="Select Shipping location" :items="['Australia']" variant="underlined" @update:modelValue="callproductsApi()"></v-select>
         </div>
       </div>
       <div class="col-lg-4 col-md-6 col-sm-12 col-xl-3">
@@ -36,7 +37,7 @@
             <h6 class="fw-semibold">Data Category</h6>
             <exclamation-circle-icon />
           </div>
-          <v-select class="selectinput" v-model="data.dataCategory" label="Select Shipping location" :items="['Active', 'Sold']" variant="underlined" @update:modelValue="callproductsApi"></v-select>
+          <v-select class="selectinput" v-model="data.dataCategory" label="Select Shipping location" :items="['Active', 'Sold']" variant="underlined" @update:modelValue="callproductsApi()"></v-select>
         </div>
       </div>
       <div class="col-lg-4 col-md-6 col-sm-12 col-xl-3">
@@ -76,7 +77,7 @@
             <h6 class="fw-semibold">Exclude phrase</h6>
             <exclamation-circle-icon />
           </div>
-          <input class="pt-5 mt-2 exclude-phrase" v-model="data.excludedPhrase" @input="callproductsApi" style="border-bottom: 2px solid black" placeholder="comma Separated Phrase" type="text" />
+          <input class="pt-5 mt-2 exclude-phrase" v-model="data.excludedPhrase" @input="callproductsApi()" style="border-bottom: 2px solid black" placeholder="comma Separated Phrase" type="text" />
         </div>
       </div>
       <div v-for="(item, index) in productfilter" :key="index" class="col-lg-4 col-md-6 col-sm-12 col-xl-3">
@@ -86,7 +87,7 @@
             <h6 class="fw-semibold">{{ index }}</h6>
             <exclamation-circle-icon />
           </div>
-          <v-autocomplete multiple v-model="data[index]" @update:modelValue="callproductsApi" class="selectinput" clearable :label="index" :items="item && item?.map((items) => ({ name: items?.name || items?.value, id: items?.ebay_condition_id || items?.id }))" item-title="name" item-value="id" variant="underlined"></v-autocomplete>
+          <v-autocomplete multiple v-model="data[index]" @update:modelValue="callproductsApi()" class="selectinput" clearable :label="index" :items="item && item?.map((items) => ({ name: items?.name || items?.value, id: items?.ebay_condition_id || items?.id }))" item-title="name" item-value="id" variant="underlined"></v-autocomplete>
         </div>
       </div>
       <div v-if="data.dataCategory == 'Active'" class="w-100 position-relative rounded-3 stats p-4 d-flex justify-content-evenly">
@@ -489,7 +490,7 @@ export default {
               dataCopy[x] = ''
             }
           }
-          await callProducts(page_number, dataCopy).then((data) => {
+          await callProducts(page_number,dataCopy).then((data) => {
             if (data) {
               results.value = data.results
               total.value = data.total_pages
