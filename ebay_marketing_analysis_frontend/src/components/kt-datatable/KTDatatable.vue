@@ -53,7 +53,7 @@
                 tabindex="0"
                 rowspan="1"
                 colspan="1"
-                style="cursor: pointer"
+                style="cursor: pointer; color: black;"
               >
                 {{ cell.name }}
               </th>
@@ -313,4 +313,7 @@ top: 50%;
 left: 50%;
 }
 
+td{
+  font-weight: 500;
+}
 </style>
