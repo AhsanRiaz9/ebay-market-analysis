@@ -1,6 +1,5 @@
 <template>
   <div>
-  
     <div class="w-100 p-2 rounded-2 d-flex align-items-center px-4 main-head" style="background-color: white">
       <div class="w-25"><p class="platform">eBay</p></div>
       <div class="w-50 d-flex align-items-center">
@@ -14,47 +13,47 @@
         <div class="section">
           <div class="d-flex justify-content-between">
             <div></div>
-            <h6 class="fw-semibold">Marketplace</h6>
+            <h6 class="fw-semibold">marketplace</h6>
             <exclamation-circle-icon />
           </div>
-          <v-select v-model="data.name" clearable class="selectinput" label="Select Marketplace" :items="['ebay.com.au']" @update:modelValue="callproductsApi()" variant="underlined"></v-select>
+          <v-select v-model="data.name" clearable class="selectinput" label="select marketplace" :items="['ebay.com.au']" @update:modelValue="callproductsApi()" variant="underlined"></v-select>
         </div>
       </div>
       <div class="col-lg-4 col-md-6 col-sm-12 col-xl-3">
         <div class="section">
           <div class="d-flex justify-content-between">
             <div></div>
-            <h6 class="fw-semibold">Shipping location</h6>
+            <h6 class="fw-semibold">shipping location</h6>
             <exclamation-circle-icon />
           </div>
-          <v-select clearable class="selectinput" v-model="data.shippingLocation" label="Select Shipping location" :items="['Australia']" variant="underlined" @update:modelValue="callproductsApi()"></v-select>
+          <v-select clearable class="selectinput" v-model="data.shippingLocation" label="select shipping location" :items="['Australia']" variant="underlined" @update:modelValue="callproductsApi()"></v-select>
         </div>
       </div>
       <div class="col-lg-4 col-md-6 col-sm-12 col-xl-3">
         <div class="section">
           <div class="d-flex justify-content-between">
             <div></div>
-            <h6 class="fw-semibold">Data Category</h6>
+            <h6 class="fw-semibold">data category</h6>
             <exclamation-circle-icon />
           </div>
-          <v-select class="selectinput" v-model="data.dataCategory" label="Select Shipping location" :items="['Active', 'Sold']" variant="underlined" @update:modelValue="callproductsApi()"></v-select>
+          <v-select class="selectinput" v-model="data.dataCategory" label="select data category" :items="['Active', 'Sold']" variant="underlined" @update:modelValue="callproductsApi()"></v-select>
         </div>
       </div>
       <div class="col-lg-4 col-md-6 col-sm-12 col-xl-3">
         <div class="section">
           <div class="d-flex justify-content-between">
             <div></div>
-            <h6 class="fw-semibold">Price</h6>
+            <h6 class="fw-semibold">price</h6>
             <exclamation-circle-icon />
           </div>
           <div class="mt-auto gap-2 d-flex justify-content-around align-items-center px-4 pb-3">
             <div class="w-50">
               <input @change="checkPrice" v-model="data.minPrice" type="number" class="pricerangeinput" />
-              <b class="text-center mx-auto d-block">MIN</b>
+              <b class="text-center mx-auto d-block">min</b>
             </div>
             <div class="w-50">
               <input @change="checkPrice" v-model="data.maxPrice" type="number" class="pricerangeinput" />
-              <b class="text-center mx-auto d-block">MAX</b>
+              <b class="text-center mx-auto d-block">max</b>
             </div>
           </div>
         </div>
@@ -63,7 +62,7 @@
         <div class="section">
           <div class="d-flex justify-content-between">
             <div></div>
-            <h6 class="fw-semibold">Sale date range</h6>
+            <h6 class="fw-semibold">sale date range</h6>
             <exclamation-circle-icon />
           </div>
 
@@ -74,10 +73,10 @@
         <div class="section">
           <div input class="d-flex justify-content-between">
             <div></div>
-            <h6 class="fw-semibold">Exclude phrase</h6>
+            <h6 class="fw-semibold">exclude phrase</h6>
             <exclamation-circle-icon />
           </div>
-          <input class="pt-5 mt-2 exclude-phrase" v-model="data.excludedPhrase" @input="callproductsApi()" style="border-bottom: 2px solid black" placeholder="comma Separated Phrase" type="text" />
+          <input class="pt-5 mt-2 exclude-phrase" v-model="data.excludedPhrase" @input="callproductsApi()" style="border-bottom: 2px solid black" placeholder="comma separated phrase" type="text" />
         </div>
       </div>
       <div v-for="(item, index) in productfilter" :key="index" class="col-lg-4 col-md-6 col-sm-12 col-xl-3">
@@ -90,82 +89,129 @@
           <v-autocomplete multiple v-model="data[index]" @update:modelValue="callproductsApi()" class="selectinput" clearable :label="index" :items="item && item?.map((items) => ({ name: items?.name || items?.value, id: items?.ebay_condition_id || items?.id }))" item-title="name" item-value="id" variant="underlined"></v-autocomplete>
         </div>
       </div>
+
       <div v-if="data.dataCategory == 'Active'" class="w-100 position-relative rounded-3 stats p-4 d-flex justify-content-evenly">
         <div v-if="loading" class="skeleton d-flex"></div>
         <div class="d-flex gap-3">
           <div>
-            <h5>AU$ {{analytics?.avg_price?.toFixed(2)}}</h5>
-            <p>Avg. listing price</p>
+            <h5>$ {{ analytics?.avg_price?.toFixed(2) }}</h5>
+            <p style="font-size: 11px; display: inline; margin-right: 10px">Avg. active price</p>
+
+            <v-tooltip location='top' text="The mean actibe price per item for similar listings, not including postage costs.">
+              <template v-slot:activator="{ props }">
+                <exclamation-circle-icon v-bind="props" />
+              </template>
+            </v-tooltip>
           </div>
           <div>
-            <h5>AU ${{ analytics?.min_price }} - AU ${{analytics?.max_price}}</h5>
-            <p>listing price range</p>
+            <h5> ${{ analytics?.min_price }} -  ${{ analytics?.max_price }}</h5>
+            <p style="font-size: 11px; display: inline; margin-right: 10px">Active price range</p>
+            <v-tooltip location='top' text="The minimun and maximum active price for similar lisitng, not including postage costs. ">
+              <template v-slot:activator="{ props }">
+                <exclamation-circle-icon v-bind="props" />
+              </template>
+            </v-tooltip>
           </div>
         </div>
         <div class="vertical-line"></div>
         <div class="d-flex gap-3">
           <div>
-            <h5>AU$ {{analytics?.avg_postage?.toFixed(2)}}</h5>
-            <p>Avg. postage</p>
+            <h5>$ {{ analytics?.avg_postage?.toFixed(2) }}</h5>
+            <p style="font-size: 11px; display: inline; margin-right: 10px">Avg. postage</p>
+            <v-tooltip location='top' text="The average posytage cost to be paid by the buyer this average doesn't include listings with free postage.">
+              <template v-slot:activator="{ props }">
+                <exclamation-circle-icon v-bind="props" />
+              </template>
+            </v-tooltip>
           </div>
           <div>
-            <h5>{{analytics?.free_postage?.toFixed(0)}}%</h5>
-            <p>Free postage</p>
+            <h5>{{ analytics?.free_postage?.toFixed(0) }}%</h5>
+            <p style="font-size: 11px; display: inline; margin-right: 10px">Free postage</p>
+            <v-tooltip location='top' text="the percentage of sale that included free postage.">
+              <template v-slot:activator="{ props }">
+                <exclamation-circle-icon v-bind="props" />
+              </template>
+            </v-tooltip>
           </div>
         </div>
         <div class="vertical-line"></div>
         <div class="d-flex gap-3">
           <div>
             <h5>{{ records }}</h5>
-            <p>Total active listing</p>
+            <p style="font-size: 11px;">Total active listing</p>
           </div>
         </div>
       </div>
       <div v-if="data.dataCategory == 'Sold'" class="w-100 position-relative rounded-3 stats p-4 d-flex justify-content-evenly">
-      <div v-if="loading" class="skeleton d-flex"></div>
+        <div v-if="loading" class="skeleton d-flex"></div>
         <div class="d-flex gap-3">
           <div>
-            <h5>AU$ {{ analytics?.avg_price?.toFixed(2) }}</h5>
-            <p>Avg. listing price</p>
+            <h5>$ {{ analytics?.avg_price?.toFixed(2) }}</h5>
+            <p style="font-size: 11px;display:inline;margin-right: 10px">Avg. sold price</p>
+            <v-tooltip location='top' text="The mean sold price per item for similar listings, not including postage costs.">
+              <template v-slot:activator="{ props }">
+                <exclamation-circle-icon v-bind="props" />
+              </template>
+            </v-tooltip>
           </div>
           <div>
-            <h5>AU$ {{ analytics?.min_price }} - AU$ {{ analytics?.max_price }}</h5>
-            <p>listing price range</p>
+            <h5>$ {{ analytics?.min_price }} - $ {{ analytics?.max_price }}</h5>
+            <p style="font-size: 11px; display: inline; margin-right: 10px">Sold price range</p>
+            <v-tooltip location='top' text="The minimun and maximum sold price for similar lisitng, not including postage costs. ">
+              <template v-slot:activator="{ props }">
+                <exclamation-circle-icon v-bind="props" />
+              </template>
+            </v-tooltip>
           </div>
         </div>
         <div class="vertical-line"></div>
         <div class="d-flex gap-3">
           <div>
-            <h5>AU$ {{ analytics?.avg_postage?.toFixed(0) }}</h5>
-            <p>Avg. postage</p>
-          </div>
-          <div>
-            <h5>{{analytics?.free_postage}} %</h5>
-            <p>Free postage</p>
-          </div>
-        </div>
-        <div class="vertical-line"></div>
-        <div class="d-flex gap-3">
-          <div>
-            <h5>{{records}}</h5>
-            <p>Total active listing</p>
-          </div>
-          <div>
-            <h5>{{analytics?.sell_through?.toFixed(2)}} %</h5>
-            <p>Sell through rate</p>
-          </div>
-        </div>
+            <h5>$ {{ analytics?.avg_postage?.toFixed(0) }}</h5>
+            <p style="font-size: 11px; display: inline; margin-right: 10px">Avg. postage</p>
+            <v-tooltip location='top' text="The average posytage cost to be paid by the buyer this average doesn't include listings with free postage.">
+              <template v-slot:activator="{ props }">
+                <exclamation-circle-icon v-bind="props" />
+              </template>
+            </v-tooltip>
 
+          </div>
+          <div>
+            <h5>{{ analytics?.free_postage }} %</h5>
+            <p style="font-size: 11px; display: inline; margin-right: 10px">Free postage</p>
+            <v-tooltip location='top' text="the percentage of sale that included free postage.">
+              <template v-slot:activator="{ props }">
+                <exclamation-circle-icon v-bind="props" />
+              </template>
+            </v-tooltip>
+          </div>
+        </div>
+        <div class="vertical-line"></div>
+        <div class="d-flex gap-3">
+          <div>
+            <h5>{{ records }}</h5>
+            <p style="font-size: 11px; margin-top: 6px;">Total sold listing</p>
+          </div>
+          <div>
+            <h5>{{ analytics?.sell_through?.toFixed(2) }} %</h5>
+            <p style="font-size: 11px; display: inline; margin-right: 10px">Sell through rate</p>
+            <v-tooltip location='top' text="the percentage of sale that included free postage.">
+              <template v-slot:activator="{ props }">
+                <exclamation-circle-icon v-bind="props" />
+              </template>
+            </v-tooltip>
+          </div>
+        </div>
       </div>
 
       <div class="py-3" style="background-color: white">
-        <KTDatatable :enable-items-per-page-dropdown="true" :table-data="results ? results : []" :table-header="headerConfig" :loading="loading" :total="total ?total : total " :rowsPerPage="rowsPerPage" :currentPage="currentPage" @current-change="current_change" @items-per-page-change="items_per_page_change">
+        <KTDatatable :enable-items-per-page-dropdown="true" :table-data="results ? results : []" :table-header="headerConfig" :loading="loading" :total="total ? total : total" :rowsPerPage="rowsPerPage" :currentPage="currentPage" @current-change="current_change" @items-per-page-change="items_per_page_change">
           <template v-slot:cell-title="{ row: product }">
-            <a :href="product.product_url" target="_blank">{{ product.title }}</a>
+            <a :href="product?.product_url" target="_blank">{{ product.title }}</a>
           </template>
 
           <template v-slot:cell-image="{ row: product }">
-            <img :src="product.image" alt="product_image" width="100" height="100" />
+          <a :href="product?.product_url"><img :src="product.image" alt="product_image" width="100" height="100" /></a>
           </template>
           <template v-slot:cell-ebay_item_id="{ row: product }">
             <a :href="product.product_url" target="_blank">{{ product.ebay_item_id }}</a>
@@ -436,9 +482,11 @@ import ExclamationCircleIcon from '@/components/icons/outlined/svg-icons/Exclama
 import KTDatatable from '@/components/kt-datatable/KTDatatable.vue'
 import { onMounted, ref } from 'vue'
 import SearchIcon from '@/components/icons/outlined/svg-icons/SearchIcon.vue'
-import { callProducts, productFilters} from '@/service'
+import { callProducts, productFilters } from '@/service'
 import { toast } from 'vue3-toastify'
+import { useRouter } from 'vue-router'
 import VueCtkDateTimePicker from 'vue-ctk-date-time-picker'
+import { useStore } from 'vuex'
 
 export default {
   components: { ExclamationCircleIcon, KTDatatable, SearchIcon, VueCtkDateTimePicker },
@@ -454,6 +502,8 @@ export default {
     const productfilter = ref([])
     const analytics = ref('')
     const filterNames = ref([])
+    const router = useRouter()
+    const store = useStore()
     const custom_shortcuts = [
       { key: 'thisWeek', label: 'This week', value: 'isoWeek' },
       { key: 'lastWeek', label: 'Last week', value: '-isoWeek' },
@@ -475,11 +525,18 @@ export default {
       brands: null,
       storages: null,
       lock_statuses: null,
-      page_size : rowsPerPage?.value
+      page_size: rowsPerPage?.value
     })
 
+    function handlelogout() {
+      store.dispatch('handleAccesstoken', null)
+      store.dispatch('handlerole', null)
+      store.dispatch('handleuserpermissions', null)
+      router.push('/auth/login')
+    }
+
     let timeout
-    async function callproductsApi(page_number=1) {
+    async function callproductsApi(page_number = 1) {
       loading.value = true
       clearTimeout(timeout)
       timeout = setTimeout(async () => {
@@ -490,7 +547,7 @@ export default {
               dataCopy[x] = ''
             }
           }
-          await callProducts(page_number,dataCopy).then((data) => {
+          await callProducts(page_number, dataCopy).then((data) => {
             if (data) {
               results.value = data.results
               total.value = data.total_pages
@@ -561,12 +618,14 @@ export default {
       loading.value = true
       try {
         const response = await productFilters()
-        if(response.detail){
-          toast.error('Session has expired, Please login again',{
-            autoClose:6000
+        if (response.detail) {
+          toast.error('Session has expired, Please login again', {
+            autoClose: 6000
           })
-        }
-        else {
+          setTimeout(() => {
+            handlelogout()
+          }, 3000)
+        } else {
           productfilter.value = response
           filterNames.value.push(...Object.keys(response))
         }
@@ -575,12 +634,12 @@ export default {
       }
       try {
         let dataCopy = { ...data.value } || false
-          for (let x in dataCopy) {
-            if (dataCopy[x] == null) {
-              dataCopy[x] = ''
-            }
+        for (let x in dataCopy) {
+          if (dataCopy[x] == null) {
+            dataCopy[x] = ''
           }
-        await callProducts(undefined,dataCopy).then((data) => {
+        }
+        await callProducts(undefined, dataCopy).then((data) => {
           results.value = data.results
           total.value = data.total_pages
           records.value = data.total_records
@@ -657,11 +716,6 @@ export default {
         sortable: false
       },
       {
-        name: 'Ranking',
-        key:'ranking',
-        sortable: false
-      },
-      {
         name: 'Created At',
         key: 'created_at',
         sortable: false
@@ -707,7 +761,7 @@ export default {
 </script>
 
 <style scoped>
-.skeleton{
+.skeleton {
   position: absolute;
   width: 100%;
   height: 100%;
@@ -719,8 +773,8 @@ export default {
 .stats {
   background: #f1f1f2;
 }
-p{
-  margin-bottom:0px;
+p {
+  margin-bottom: 0px;
 }
 .vertical-line {
   width: 2px;

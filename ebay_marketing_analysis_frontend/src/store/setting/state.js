@@ -108,7 +108,7 @@ export const defaultState = {
       target: '[data-toggle="main-sidebar"]',
       choices: ['sidebar-hover', 'sidebar-mini', 'sidebar-soft'],
       type: 'layout_design',
-      value: []
+      value: ['sidebar-hover', 'sidebar-mini',]
     },
     sidebar_menu_style: {
       target: '[data-toggle="main-sidebar"]',
