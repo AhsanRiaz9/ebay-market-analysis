@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from ebay_products.models import MobilePhone, ActiveMobilePhone
-from settings.utilis.formatters import custom_datetime_format
+from settings.utilis.formatters import custom_datetime_format, format_number
 
 class MobilePhoneSerializer(serializers.ModelSerializer):
     
@@ -16,8 +16,8 @@ class MobilePhoneSerializer(serializers.ModelSerializer):
         response['storage'] = instance.storage.value if instance.storage else ''
         response['lock_status'] = instance.lock_status.name if instance.lock_status else ''
         response['condition'] = instance.condition.name if instance.condition else ''
-        response['sold_price'] = f'${instance.sold_price}'
-        response['shipping_fee'] = f'${instance.shipping_fee}'
+        response['sold_price'] = f'${format_number(instance.sold_price)}'
+        response['shipping_fee'] = f'${format_number(instance.shipping_fee)}'
         response['created_at'] = custom_datetime_format(response['created_at'])
         return response
 
@@ -35,7 +35,7 @@ class ActiveMobilePhoneSerializer(serializers.ModelSerializer):
         response['storage'] = instance.storage.value if instance.storage else ''
         response['lock_status'] = instance.lock_status.name if instance.lock_status else ''
         response['condition'] = instance.condition.name if instance.condition else ''
-        response['sold_price'] = f'${instance.sold_price}'
-        response['shipping_fee'] = f'${instance.shipping_fee}'
+        response['sold_price'] = f'${format_number(instance.sold_price)}'
+        response['shipping_fee'] = f'${format_number(instance.shipping_fee)}'
         response['created_at'] = custom_datetime_format(response['created_at'])
         return response
