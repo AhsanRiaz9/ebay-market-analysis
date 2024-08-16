@@ -25,7 +25,7 @@
 - Place your credentials in .env
 
 ## Install Required packages
-    pip install - requirements.txt
+    pip install -r requirements.txt
 
 ## Run Database migration
     python3 manage.py makemigrations

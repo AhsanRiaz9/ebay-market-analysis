@@ -48,7 +48,7 @@ class MobilePhoneCustomPagination(CutstomPagination):
                 sell_through = (queryset.count() / active_mobile_phones.count()) * 100.0
             else:
                 sell_through = 0.0
-            extra_output['analytics']['sell_through'] = sell_through
+            extra_output['analytics']['sell_through'] = format_number(sell_through)
         response = self.get_paginated_response(data, extra_output)
         return Response(response)
     

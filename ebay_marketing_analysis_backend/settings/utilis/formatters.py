@@ -1,7 +1,7 @@
 from django.utils.formats import date_format
 from django.utils import timezone
 import re
-
+ 
 def custom_datetime_format(custom_datetime):
     created_at = timezone.datetime.strptime(str(custom_datetime), '%Y-%m-%dT%H:%M:%S.%f%z')
     formated_datetime = date_format(created_at, format='M d, Y, P')
@@ -9,7 +9,8 @@ def custom_datetime_format(custom_datetime):
     return formated_datetime
 
 def format_number(number):
-    number_info = str(number).split('.')
+    number = float(number)
+    number_info = str(round(number, 2)).split('.')
     integral_part = number_info[0]
     last_3_digits = integral_part[-3:]
     integral_part = integral_part[:-3] 
