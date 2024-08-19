@@ -118,7 +118,7 @@
           <div>
             <h5>$ {{ Number(analytics?.avg_postage) }}</h5>
             <p style="font-size: 11px; display: inline; margin-right: 10px">Avg. postage</p>
-            <v-tooltip location='top' text="The average posytage cost to be paid by the buyer this average doesn't include listings with free postage.">
+            <v-tooltip location='top' text="The average postage cost to be paid by the buyer this average doesn't include listings with free postage.">
               <template v-slot:activator="{ props }">
                 <exclamation-circle-icon v-bind="props" />
               </template>
@@ -169,7 +169,7 @@
           <div>
             <h5>$ {{ analytics?.avg_postage }}</h5>
             <p style="font-size: 11px; display: inline; margin-right: 10px">Avg. postage</p>
-            <v-tooltip location='top' text="The average posytage cost to be paid by the buyer this average doesn't include listings with free postage.">
+            <v-tooltip location='top' text="The average postage cost to be paid by the buyer this average doesn't include listings with free postage.">
               <template v-slot:activator="{ props }">
                 <exclamation-circle-icon v-bind="props" />
               </template>
