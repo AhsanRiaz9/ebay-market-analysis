@@ -86,7 +86,7 @@
             <h6 class="fw-semibold">{{ index }}</h6>
             <exclamation-circle-icon />
           </div>
-          <v-autocomplete multiple v-model="data[index]" @update:modelValue="callproductsApi()" class="selectinput" clearable :label="index" :items="item && item?.map((items) => ({ name: items?.name || items?.value, id: items?.ebay_condition_id || items?.id }))" item-title="name" item-value="id" variant="underlined"></v-autocomplete>
+          <v-autocomplete style="font-weight: 700;" multiple v-model="data[index]" @update:modelValue="callproductsApi()" class="selectinput" clearable :label="index" :items="item && item?.map((items) => ({ name: items?.name || items?.value, id: items?.ebay_condition_id || items?.id }))" item-title="name" item-value="id" variant="underlined"></v-autocomplete>
         </div>
       </div>
 
@@ -94,10 +94,10 @@
         <div v-if="loading" class="skeleton d-flex"></div>
         <div class="d-flex gap-3">
           <div>
-            <h5>$ {{ Number(analytics?.avg_price).toFixed(2) }}</h5>
+            <h5>${{ Number(analytics?.avg_price).toFixed(2) }}</h5>
             <p style="font-size: 11px; display: inline; margin-right: 10px">Avg. active price</p>
 
-            <v-tooltip location='top' text="The mean actibe price per item for similar listings, not including postage costs.">
+            <v-tooltip location='top' text="The mean active price per item for similar listings, not including postage costs.">
               <template v-slot:activator="{ props }">
                 <exclamation-circle-icon v-bind="props" />
               </template>
@@ -116,7 +116,7 @@
         <div class="vertical-line"></div>
         <div class="d-flex gap-3">
           <div>
-            <h5>$ {{ Number(analytics?.avg_postage) }}</h5>
+            <h5>${{ Number(analytics?.avg_postage) }}</h5>
             <p style="font-size: 11px; display: inline; margin-right: 10px">Avg. postage</p>
             <v-tooltip location='top' text="The average postage cost to be paid by the buyer this average doesn't include listings with free postage.">
               <template v-slot:activator="{ props }">
@@ -127,7 +127,7 @@
           <div>
             <h5>{{ Number(analytics?.free_postage).toFixed(0) }}%</h5>
             <p style="font-size: 11px; display: inline; margin-right: 10px">Free postage</p>
-            <v-tooltip location='top' text="the percentage of sale that included free postage.">
+            <v-tooltip location='top' text="The percentage of sale that included free postage.">
               <template v-slot:activator="{ props }">
                 <exclamation-circle-icon v-bind="props" />
               </template>
@@ -138,7 +138,7 @@
         <div class="d-flex gap-3">
           <div>
             <h5>{{ records }}</h5>
-            <p style="font-size: 11px;">Total active listing</p>
+            <p style="font-size: 11px; margin-top: 10px">Total active listing</p>
           </div>
         </div>
       </div>
@@ -146,7 +146,7 @@
         <div v-if="loading" class="skeleton d-flex"></div>
         <div class="d-flex gap-3">
           <div>
-            <h5>$ {{ analytics?.avg_price }}</h5>
+            <h5>${{ analytics?.avg_price }}</h5>
             <p style="font-size: 11px;display:inline;margin-right: 10px">Avg. sold price</p>
             <v-tooltip location='top' text="The mean sold price per item for similar listings, not including postage costs.">
               <template v-slot:activator="{ props }">
@@ -155,7 +155,7 @@
             </v-tooltip>
           </div>
           <div>
-            <h5>$ {{ analytics?.min_price }} - $ {{ analytics?.max_price }}</h5>
+            <h5>${{ analytics?.min_price }} - ${{ analytics?.max_price }}</h5>
             <p style="font-size: 11px; display: inline; margin-right: 10px">Sold price range</p>
             <v-tooltip location='top' text="The minimun and maximum sold price for similar lisitng, not including postage costs. ">
               <template v-slot:activator="{ props }">
@@ -167,7 +167,7 @@
         <div class="vertical-line"></div>
         <div class="d-flex gap-3">
           <div>
-            <h5>$ {{ analytics?.avg_postage }}</h5>
+            <h5>${{ analytics?.avg_postage }}</h5>
             <p style="font-size: 11px; display: inline; margin-right: 10px">Avg. postage</p>
             <v-tooltip location='top' text="The average postage cost to be paid by the buyer this average doesn't include listings with free postage.">
               <template v-slot:activator="{ props }">
@@ -177,9 +177,9 @@
 
           </div>
           <div>
-            <h5>{{ analytics?.free_postage }} %</h5>
+            <h5>{{ analytics?.free_postage }}%</h5>
             <p style="font-size: 11px; display: inline; margin-right: 10px">Free postage</p>
-            <v-tooltip location='top' text="the percentage of sale that included free postage.">
+            <v-tooltip location='top' text="The percentage of sale that included free postage.">
               <template v-slot:activator="{ props }">
                 <exclamation-circle-icon v-bind="props" />
               </template>
@@ -193,9 +193,11 @@
             <p style="font-size: 11px; margin-top: 6px;">Total sold listing</p>
           </div>
           <div>
-            <h5>{{ analytics?.sell_through }} %</h5>
+            <h5>{{ analytics?.sell_through }}%</h5>
             <p style="font-size: 11px; display: inline; margin-right: 10px">Sell through rate</p>
-            <v-tooltip location='top' text="the percentage of sale that included free postage.">
+            <v-tooltip location='top' text="The percentage of sale that included free postage. 
+            formula : (sold/active)*100
+            ">
               <template v-slot:activator="{ props }">
                 <exclamation-circle-icon v-bind="props" />
               </template>
@@ -592,7 +594,16 @@ export default {
         if (start && end) {
           dateJoin = start.concat(' to ', end)
         }
+        else{
+          if(start){
+            date.value =  {"start":start} 
+          }
+        }
         data.value.date_range = dateJoin || start
+        callproductsApi()
+      }
+      else{
+        data.value.date_range = date.value
         callproductsApi()
       }
     }
@@ -615,6 +626,16 @@ export default {
     }
 
     onMounted(async () => {
+      const today = new Date();
+function formatDate(date) {
+return new Intl.DateTimeFormat('en-CA').format(date);
+}
+const startDate = formatDate(new Date(today.setDate(today.getDate() - 30)));
+const endDate = formatDate(new Date());
+date.value = {'start':startDate,'end':endDate,'shortcut':30}
+data.value.date_range = date.value.start.concat(' to ',date.value.end)
+
+
       loading.value = true
       try {
         const response = await productFilters()
@@ -754,7 +775,8 @@ export default {
       date,
       productfilter,
       filterNames,
-      analytics
+      analytics,
+
     }
   }
 }
