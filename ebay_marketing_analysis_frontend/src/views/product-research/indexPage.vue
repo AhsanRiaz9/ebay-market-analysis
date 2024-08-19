@@ -195,8 +195,8 @@
           <div>
             <h5>{{ analytics?.sell_through }}%</h5>
             <p style="font-size: 11px; display: inline; margin-right: 10px">Sell through rate</p>
-            <v-tooltip location='top' text="The percentage of sale that included free postage. 
-            formula : (sold/active)*100
+            <v-tooltip location='top' text="The percentage of similar items that sold. 
+            Formula : (sold/active)*100
             ">
               <template v-slot:activator="{ props }">
                 <exclamation-circle-icon v-bind="props" />
