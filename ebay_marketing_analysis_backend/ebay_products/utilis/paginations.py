@@ -53,7 +53,7 @@ class MobilePhoneCustomPagination(CutstomPagination):
         return Response(response)
     
     def get_price_anlytics(self, queryset):
-        analytics = queryset.aggregate(min_price = Min('sold_price'), max_price = Max('sold_price') + 2513215, avg_price = Avg('sold_price'), avg_postage = Avg('shipping_fee'),)
+        analytics = queryset.aggregate(min_price = Min('sold_price'), max_price = Max('sold_price'), avg_price = Avg('sold_price'), avg_postage = Avg('shipping_fee'),)
         total_products = queryset.count()
         shipping_fee_products = queryset.filter(shipping_fee=0).count()
         if total_products:
