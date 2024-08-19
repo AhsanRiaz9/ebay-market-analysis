@@ -17,3 +17,4 @@ redis
 celery[redis]
 drf_yasg
 slackclient
+undetected-chromedriver

@@ -5,6 +5,9 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 from settings.utilis.exceptions import NetworkException, WebDriverCloseException
+import undetected_chromedriver as uc
+import os
+import random
 
 class SeleniumWebDriver:
     def __init__(self, headless=True):
@@ -17,7 +20,8 @@ class SeleniumWebDriver:
         options.add_argument(f'user-agent={user_agent}')
         options.add_argument('--disable-dev-shm-usage')
         options.add_argument("--start-maximized")
-        return webdriver.Chrome(options=options)
+        options.add_argument("--incognito")
+        return uc.Chrome(options=options)
 
     @staticmethod
     def _configure_chrome_options(options, headless):
@@ -31,14 +35,24 @@ class SeleniumWebDriver:
         except:
             pass
 
+def refresh_ip():
+    os.system('expressvpn disconnect')
+    os.system(f"expressvpn connect 'Pakistan'")
+    time.sleep(4)
+
+def encode_string(input_string):
+    input_string = str(input_string)
+    conversion_codes = {'+': '%252B', '.': '%252E', ' ': '%2520', ',': '%7C', '&': '%2526', '-': '%252D', '(': '%2528', ')': '%2529', '/': '%252F'}
+    translated_string = input_string.translate(str.maketrans(conversion_codes))
+    return translated_string
+        
 def create_encoded_url(url, params):
-    conditions = [f'{key}={params[key]}' for key in params.keys()]
-    query_string = '&'.join(conditions)
+    params_value = [f'{encode_string(key)}={encode_string(value)}' for key, value in params.items()]
+    query_string = '&'.join(params_value)
     if not '?' in url:
         encoded_url = f'{url}?{query_string}'   
     else:
         encoded_url = f'{url}{query_string}'
-    encoded_url = encoded_url.replace(' ', '%2520').replace(',', '%7C')
     return encoded_url
 
 def format_date(date_str):

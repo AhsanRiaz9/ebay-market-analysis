@@ -1,6 +1,6 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from settings.utilis.helpers import SeleniumWebDriver, create_encoded_url, format_date, check_internet_connection, create_internet_connection, check_webdriver_close_exception
+from settings.utilis.helpers import SeleniumWebDriver, create_encoded_url, format_date, check_internet_connection, create_internet_connection, check_webdriver_close_exception, refresh_ip
 from product_configuration.models import ProductModel, BrandCategory, ColorCategory, Category, Storage, ProductModelCategory, Condition, ConditionCategory, LockStatus, Location, Brand, Color
 from ebay_products.models import MobilePhone, ActiveMobilePhone, ProductRankCounter
 import threading
@@ -22,7 +22,7 @@ class DownloadProductView(APIView):
         self.selenium_webdriver = None
         os.system('killall -9 chrome')
         time.sleep(2)
-        t = threading.Thread(target=self.run_scraping_process, args=[category_id,],daemon=True)
+        t = threading.Thread(target=self.run_scraping_process, args=[category_id,], daemon=True)
         t.start()
         return Response({'message': f'Background job started to download product data of category {category_id}.'})
     
@@ -30,6 +30,12 @@ class DownloadProductView(APIView):
         self.selenium_webdriver = SeleniumWebDriver(headless=True)
         self.set_postage_location('australia')
         
+    def accept_consent_btn(self):
+        consent_button = self.selenium_webdriver.driver.find_elements(By.CSS_SELECTOR, 'button.fc-cta-consent')
+        if consent_button:
+            consent_button[0].click()
+            time.sleep(3)
+    
     def run_scraping_process(self, category_id):
         attempt = 0
         while attempt <= 10:
@@ -249,6 +255,7 @@ class DownloadProductView(APIView):
                 mobile_process.mobile_model = mobile
                 mobile_process.save()
                 if mobile_process.is_completed == True:
+                    time.sleep(3)
                     continue
                 filter_params = copy.deepcopy(params)
                 filter_params.update({'Model': mobile})
@@ -320,13 +327,16 @@ class DownloadProductView(APIView):
         try:
             self.visit_count += 1
             close_browser = self.visit_count%20==0
+            
             if not close_browser:
                 self.selenium_webdriver.driver.get(url)
                 time.sleep(3)
             body_text = self.selenium_webdriver.driver.find_element(By.CSS_SELECTOR, 'body').text
-            error_msg = 'An error occurred while processing your request.'
-            if self.visit_count%20==0 or error_msg in body_text:
+            error_msg1 = 'An error occurred while processing your request.'
+            error_msg2 = 'Please verify yourself to continue'
+            if self.visit_count%20==0 or error_msg1 in body_text or error_msg2 in body_text:
                 self.selenium_webdriver.close()
+                refresh_ip()
                 self.set_up_selenium_webdriver()
                 self.selenium_webdriver.driver.get(url)
                 time.sleep(3)
@@ -346,23 +356,29 @@ class DownloadProductView(APIView):
     def set_postage_location(self, country):
         print(country)
         driver = self.selenium_webdriver.driver
-        driver.get('https://www.ebay.com.au/sch/i.html?_from=R40&_trksid=p4432023.m570.l1313&_nkw=iphone&_sacat=0')
-        time.sleep(3)
-        postage_btn = driver.find_elements(By.CSS_SELECTOR, 'button > span.s-zipcode-entry__label')
-        if postage_btn:
-            postage_btn[0].click()
-            time.sleep(2)
-            country_selector = driver.find_elements(By.CSS_SELECTOR, 'select#c2-10-16-24-7-select')
-            if country_selector:
-                country_selector[0].send_keys(country)
-                post_code = driver.find_element(By.CSS_SELECTOR, 'input#c2-10-16-24-10-textbox')
-                post_code.send_keys('2144')
-                time.sleep(1)
-                apply_btn = driver.find_elements(By.CSS_SELECTOR, '.s-zipcode-entry__apply > button.btn--primary')
-                if apply_btn:
-                    apply_btn[0].click()
-                    time.sleep(3)
-                 
+        for i in range(3):
+            driver.get('https://www.ebay.com.au/sch/i.html?_from=R40&_trksid=p4432023.m570.l1313&_nkw=iphone&_sacat=0')
+            time.sleep(10)
+            self.accept_consent_btn()
+            time.sleep(3)
+            postage_btn = driver.find_elements(By.CSS_SELECTOR, 'button > span.s-zipcode-entry__label')
+            if postage_btn:
+                postage_btn[0].click()
+                time.sleep(2)
+                country_selector = driver.find_elements(By.CSS_SELECTOR, 'div.srp-shipping-location__form--inline select')
+                if country_selector:
+                    country_selector[0].send_keys(country)
+                    post_code = driver.find_element(By.CSS_SELECTOR, "input[autocomplete='postal-code']")
+                    post_code.send_keys('2144')
+                    time.sleep(1)
+                    apply_btn = driver.find_elements(By.CSS_SELECTOR, '.s-zipcode-entry__apply > button.btn--primary')
+                    if apply_btn:
+                        apply_btn[0].click()
+                        time.sleep(3)
+                        print(f'Location changed to {country} successfully.')
+                        time.sleep(5)
+                        break
+                              
     def scrap_data(self, url, params, mobile_process, filter_conditions, category):
         driver = self.selenium_webdriver.driver
         location = Location.objects.filter(domain='ebay.com.au').first()
