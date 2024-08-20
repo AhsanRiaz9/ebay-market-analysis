@@ -7,7 +7,6 @@ from webdriver_manager.chrome import ChromeDriverManager
 from settings.utilis.exceptions import NetworkException, WebDriverCloseException
 import undetected_chromedriver as uc
 import os
-import random
 
 class SeleniumWebDriver:
     def __init__(self, headless=True):

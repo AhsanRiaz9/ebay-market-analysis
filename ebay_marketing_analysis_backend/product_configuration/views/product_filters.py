@@ -1,9 +1,8 @@
 from rest_framework.views import APIView
 from product_configuration.models import Condition, ConditionCategory, Category
-from ebay_products.utilis.paginations import CutstomPagination
 from product_configuration.serializers import ConditionSerializer, ColorCategorySerializer, BrandCategorySerializer, StorageSerializer, LockStatusSerializer
 from rest_framework.response import Response
-from product_configuration.models import ColorCategory, BrandCategory, Storage, Condition, ProductModelCategory, LockStatus, Category
+from product_configuration.models import ColorCategory, BrandCategory, Storage, Condition, LockStatus, Category
 
 
 class ProductFiltersView(APIView):

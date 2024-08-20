@@ -1,9 +1,7 @@
-from rest_framework.generics import ListAPIView
 from rest_framework.views import APIView
 from ebay_products.serializers import MobilePhoneSerializer, ActiveMobilePhoneSerializer
 from ebay_products.models import MobilePhone, ActiveMobilePhone
 from ebay_products.utilis.paginations import MobilePhoneCustomPagination
-from product_configuration.models import Condition
 
 class MobilePhoneListView(APIView, MobilePhoneCustomPagination):
     
