@@ -61,6 +61,7 @@ class MobilePhoneCustomPagination(CutstomPagination):
         else:
             analytics['free_postage'] = 0.0
         analytics = dict(analytics)
-        for key in list(analytics.keys()):
-            analytics[key] = format_number(str(analytics[key]))
+        for key, value in analytics.items():
+            if value:
+                analytics[key] = format_number(str(value))
         return analytics
