@@ -1,6 +1,6 @@
 from asyncio import Condition
 from django.contrib import admin
-from .models import Category, Brand, BrandCategory, Color, ColorCategory, LockStatus, ProductModel, ProductModelCategory, Storage, Condition, ConditionCategory, Filter, FilterCategory, Location
+from .models import *
 
 # Register your models here.
 admin.site.register(Category)
@@ -17,3 +17,4 @@ admin.site.register(Filter)
 admin.site.register(FilterCategory)
 admin.site.register(Location)
 admin.site.register(ConditionCategory)
+admin.site.register(EbayDomain)

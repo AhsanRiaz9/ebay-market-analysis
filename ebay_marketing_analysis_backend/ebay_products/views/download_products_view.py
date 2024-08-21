@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from settings.utilis.helpers import SeleniumWebDriver, create_encoded_url, format_date, check_internet_connection, create_internet_connection, check_webdriver_close_exception, refresh_ip
-from product_configuration.models import ProductModel, BrandCategory, ColorCategory, Category, Storage, ProductModelCategory, Condition, ConditionCategory, LockStatus, Location, Brand, Color
+from product_configuration.models import ProductModel, BrandCategory, ColorCategory, Category, Storage, ProductModelCategory, Condition, ConditionCategory, LockStatus, Location, Brand, Color, EbayDomain
 from ebay_products.models import MobilePhone, ActiveMobilePhone, ProductRankCounter
 import threading
 import copy
@@ -355,33 +355,36 @@ class DownloadProductView(APIView):
     
     def set_postage_location(self, country):
         print(country)
-        driver = self.selenium_webdriver.driver
-        for i in range(3):
-            driver.get('https://www.ebay.com.au/sch/i.html?_from=R40&_trksid=p4432023.m570.l1313&_nkw=iphone&_sacat=0')
-            time.sleep(10)
-            self.accept_consent_btn()
-            time.sleep(3)
-            postage_btn = driver.find_elements(By.CSS_SELECTOR, 'button > span.s-zipcode-entry__label')
-            if postage_btn:
-                postage_btn[0].click()
-                time.sleep(2)
-                country_selector = driver.find_elements(By.CSS_SELECTOR, 'div.srp-shipping-location__form--inline select')
-                if country_selector:
-                    country_selector[0].send_keys(country)
-                    post_code = driver.find_element(By.CSS_SELECTOR, "input[autocomplete='postal-code']")
-                    post_code.send_keys('2144')
-                    time.sleep(1)
-                    apply_btn = driver.find_elements(By.CSS_SELECTOR, '.s-zipcode-entry__apply > button.btn--primary')
-                    if apply_btn:
-                        apply_btn[0].click()
-                        time.sleep(3)
-                        print(f'Location changed to {country} successfully.')
-                        time.sleep(5)
-                        break
-                              
+        location = Location.objects.filter(country=country).first()
+        if location:
+            driver = self.selenium_webdriver.driver
+            for i in range(3):
+                driver.get('https://www.ebay.com.au/sch/i.html?_from=R40&_trksid=p4432023.m570.l1313&_nkw=iphone&_sacat=0')
+                time.sleep(10)
+                self.accept_consent_btn()
+                time.sleep(3)
+                postage_btn = driver.find_elements(By.CSS_SELECTOR, 'button > span.s-zipcode-entry__label')
+                if postage_btn:
+                    postage_btn[0].click()
+                    time.sleep(2)
+                    country_selector = driver.find_elements(By.CSS_SELECTOR, 'div.srp-shipping-location__form--inline select')
+                    if country_selector:
+                        country_selector[0].send_keys(country)
+                        post_code = driver.find_element(By.CSS_SELECTOR, "input[autocomplete='postal-code']")
+                        post_code.send_keys(location.postal_code)
+                        time.sleep(1)
+                        apply_btn = driver.find_elements(By.CSS_SELECTOR, '.s-zipcode-entry__apply > button.btn--primary')
+                        if apply_btn:
+                            apply_btn[0].click()
+                            time.sleep(3)
+                            print(f'Location changed to {country} successfully.')
+                            time.sleep(5)
+                            break
+                                
     def scrap_data(self, url, params, mobile_process, filter_conditions, category):
         driver = self.selenium_webdriver.driver
-        location = Location.objects.filter(domain='ebay.com.au').first()
+        location = Location.objects.filter(country='australia').first()
+        ebay_domain = EbayDomain.objects.filter(name='ebay.com.au').first()
         filter_params = copy.deepcopy(params)
         filter_params.update(filter_conditions)
         encoded_url = create_encoded_url(url, filter_params)
@@ -460,7 +463,7 @@ class DownloadProductView(APIView):
                     if mobile_process.is_sold_listing == True:
                         mobile_phone = MobilePhone(title=title, sold_price=sold_price, shipping_fee=shipping_fee, ebay_item_id=ebay_item_id,
                         product_url=product_url, image=image, category=category, product_model=product_model, brand=brand, color=color, storage=storage, lock_status=lock_status,
-                        location=location, condition=condition, sold_date=sold_date, scraping_url=encoded_url)
+                        location=location, ebay_domain=ebay_domain, condition=condition, sold_date=sold_date, scraping_url=encoded_url)
                     else:
                         rank_vaule += 1
                         mobile = ActiveMobilePhone.objects.filter(product_url=product_url).first()
@@ -473,7 +476,7 @@ class DownloadProductView(APIView):
                             continue
                         mobile_phone = ActiveMobilePhone(title=title, sold_price=sold_price, shipping_fee=shipping_fee, ebay_item_id=ebay_item_id, ranking=rank_vaule,
                         product_url=product_url, image=image, category=category, product_model=product_model, brand=brand, color=color, storage=storage, lock_status=lock_status,
-                        location=location, condition=condition, scraping_url=encoded_url)
+                        location=location, ebay_domain=ebay_domain, condition=condition, scraping_url=encoded_url)
                     mobile_phones_objects.append(mobile_phone)
                 next_btn = driver.find_elements(By.CSS_SELECTOR, 'a.pagination__next')
                 if next_btn:

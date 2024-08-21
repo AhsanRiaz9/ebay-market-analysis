@@ -1,5 +1,5 @@
 from django.db import models
-from product_configuration.models import ColorCategory, BrandCategory, Storage, Condition, ProductModelCategory, LockStatus, Category, Location
+from product_configuration.models import ColorCategory, BrandCategory, Storage, Condition, ProductModelCategory, LockStatus, Category, Location, EbayDomain
 
 class MobilePhone(models.Model):
     title = models.CharField(max_length=255)
@@ -16,6 +16,7 @@ class MobilePhone(models.Model):
     lock_status = models.ForeignKey(LockStatus, on_delete=models.SET_NULL, null=True)
     condition = models.ForeignKey(Condition, on_delete=models.SET_NULL, null=True)
     location = models.ForeignKey(Location, on_delete=models.SET_NULL, null=True)
+    ebay_domain = models.ForeignKey(EbayDomain, on_delete=models.SET_NULL, null=True)
     sold_date = models.DateField()
     scraping_url = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
@@ -35,6 +36,7 @@ class ActiveMobilePhone(models.Model):
     lock_status = models.ForeignKey(LockStatus, on_delete=models.SET_NULL, null=True)
     condition = models.ForeignKey(Condition, on_delete=models.SET_NULL, null=True)
     location = models.ForeignKey(Location, on_delete=models.SET_NULL, null=True)
+    ebay_domain = models.ForeignKey(EbayDomain, on_delete=models.SET_NULL, null=True)
     ranking = models.BigIntegerField()
     scraping_url = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)

@@ -6,4 +6,4 @@ from .product_models import ProductModel, ProductModelCategory
 from .storage import Storage
 from .conditions import Condition, ConditionCategory
 from .filters import Filter, FilterCategory
-from .locations import Location
+from .locations import Location, EbayDomain

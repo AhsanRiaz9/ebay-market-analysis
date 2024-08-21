@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from settings.utilis.helpers import SeleniumWebDriver, create_encoded_url
-from product_configuration.models import Category, Brand, BrandCategory, Color, ColorCategory, LockStatus, Storage, ProductModel, ProductModelCategory, Condition, ConditionCategory, Filter, FilterCategory, Location
+from product_configuration.models import Category, Brand, BrandCategory, Color, ColorCategory, LockStatus, Storage, ProductModel, ProductModelCategory, Condition, ConditionCategory, Filter, FilterCategory, Location, EbayDomain
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -247,13 +247,18 @@ class DownloadEbayLocations(APIView):
     def get(self, request):
         status = True
         message = 'Location downloaded successfully!'
+        ebay_domains = [
+            "ebay.com", "ebay.co.uk", "ebay.com.au", "ebay.de", "ebay.ca", "ebay.fr",
+            "ebay.it", "ebay.es", "ebay.at", "ebay.ch", "ebay.com.hk", "ebay.com.sg",
+            "ebay.com.my", "ebay.in", "ebay.ph", "ebay.ie", "ebay.pl", "ebay.be",
+            "ebay.nl", "ebay.cn", "ebay.com.tw", "ebay.co.jp", "ebaythailand.co.th"
+        ]
+        countries_location = [{'country': 'australia', 'postal_code': '2144'}]
         try:
-            df = pd.read_csv('product_configuration/locations.csv')
-            size = len(df)
-            location_objects = []
-            for i in range(size):
-                location_objects.append(Location(domain=df['domain'][i], country=df['country'][i]))
-            Location.objects.bulk_create(location_objects, ignore_conflicts=True, batch_size=500)
+            location_objects = [Location(country=location['country'], postal_code=location['postal_code']) for location in countries_location]
+            Location.objects.bulk_create(location_objects, ignore_conflicts=True, batch_size=100)
+            ebay_domains_objects = [EbayDomain(name=domain) for domain in ebay_domains]
+            EbayDomain.objects.bulk_create(ebay_domains_objects, ignore_conflicts=True, batch_size=100)
         except Exception as e:
             print(e)
             status = False
