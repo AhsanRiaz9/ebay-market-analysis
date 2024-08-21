@@ -200,9 +200,9 @@
               </div>
             </a>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-              <li><router-link class="dropdown-item" :to="{ name: 'default.user-profile' }">Profile</router-link></li>
-              <li><router-link class="dropdown-item" :to="{ name: 'default.user-privacy-setting' }">Privacy Setting</router-link></li>
-              <li><hr class="dropdown-divider" /></li>
+              <!-- <li><router-link class="dropdown-item" :to="{ name: 'default.user-profile' }">Profile</router-link></li> -->
+              <!-- <li><router-link class="dropdown-item" :to="{ name: 'default.user-privacy-setting' }">Privacy Setting</router-link></li> -->
+              <!-- <li><hr class="dropdown-divider" /></li> -->
               <li class="dropdown-item " style="cursor: pointer" @click="handlelogout()">Logout</li>
             </ul>
           </li>
