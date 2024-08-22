@@ -20,7 +20,7 @@ class SeleniumWebDriver:
         options.add_argument('--disable-dev-shm-usage')
         options.add_argument("--start-maximized")
         options.add_argument("--incognito")
-        return uc.Chrome(options=options)
+        return webdriver.Chrome(options=options)
 
     @staticmethod
     def _configure_chrome_options(options, headless):
