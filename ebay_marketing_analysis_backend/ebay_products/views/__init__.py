@@ -1,2 +1,3 @@
-from .download_products_view import DownloadProductView
+from .download_products_views import DownloadProductView
 from .mobile_phone_views import MobilePhoneListView
+from .download_specific_products_views import DownloadSpecificProductsView
