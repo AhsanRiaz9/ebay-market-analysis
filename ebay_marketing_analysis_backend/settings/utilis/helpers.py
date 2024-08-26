@@ -7,6 +7,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 from settings.utilis.exceptions import NetworkException, WebDriverCloseException
 import undetected_chromedriver as uc
 import os
+import random
 
 class SeleniumWebDriver:
     def __init__(self, headless=True):
@@ -35,8 +36,9 @@ class SeleniumWebDriver:
             pass
 
 def refresh_ip():
+    locations = ['Argentina', 'Bahamas', 'Bermuda', 'Bolivia', 'Brazil', 'Canada', 'Cayman Islands', 'Chile', 'Colombia', 'Costa Rica', 'Cuba', 'Dominican Republic', 'Ecuador', 'Guatemala', 'Honduras', 'Jamaica', 'Mexico', 'Panama', 'Peru', 'Puerto Rico', 'Trinidad and Tobago', 'United States', 'Uruguay', 'Venezuela', 'Albania', 'Andorra', 'Armenia', 'Austria', 'Belarus', 'Belgium', 'Bosnia and Herzegovina', 'Bulgaria', 'Croatia', 'Cyprus', 'Czech Republic', 'Denmark', 'Estonia', 'Finland', 'France', 'Georgia', 'Germany', 'Greece', 'Hungary', 'Iceland', 'Ireland', 'Isle of Man', 'Italy', 'Jersey', 'Latvia', 'Liechtenstein', 'Lithuania', 'Luxembourg', 'Malta', 'Moldova', 'Monaco', 'Montenegro', 'Netherlands', 'North Macedonia', 'Norway', 'Poland', 'Portugal', 'Romania', 'Serbia', 'Slovakia', 'Slovenia', 'Spain', 'Sweden', 'Switzerland', 'Turkey', 'Ukraine', 'United Kingdom', 'Australia', 'Bangladesh', 'Bhutan', 'Brunei Darussalam', 'Cambodia', 'Guam', 'Hong Kong', 'India', 'Indonesia', 'Japan', 'Kazakhstan', 'Laos', 'Macau', 'Malaysia', 'Mongolia', 'Myanmar', 'Nepal', 'New Zealand', 'Pakistan', 'Philippines', 'Singapore', 'South Korea', 'Sri Lanka', 'Taiwan', 'Thailand', 'Uzbekistan', 'Vietnam', 'Algeria', 'Egypt', 'Ghana', 'Kenya', 'Lebanon', 'Morocco', 'South Africa']
     os.system('expressvpn disconnect')
-    os.system(f"expressvpn connect 'Pakistan'")
+    os.system(f"expressvpn connect '{random.choice(locations)}'")
     time.sleep(4)
 
 def encode_string(input_string):
