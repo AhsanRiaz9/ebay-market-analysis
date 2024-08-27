@@ -46,6 +46,13 @@ def encode_string(input_string):
     conversion_codes = {'+': '%252B', '.': '%252E', ' ': '%2520', ',': '%7C', '&': '%2526', '-': '%252D', '(': '%2528', ')': '%2529', '/': '%252F'}
     translated_string = input_string.translate(str.maketrans(conversion_codes))
     return translated_string
+
+def decode_string(input_string):
+    input_string = str(input_string)
+    conversion_codes = {'%252B': '+', '%252E': '.', '%2520': ' ', '%7C': ',', '%2526': '&', '%252D': '-', '%2528': '(', '%2529': ')', '%252F': '/'}
+    for key, value in conversion_codes.items():
+        input_string = input_string.replace(key, value)
+    return input_string
         
 def create_encoded_url(url, params):
     params_value = [f'{encode_string(key)}={encode_string(value)}' for key, value in params.items()]
@@ -54,7 +61,7 @@ def create_encoded_url(url, params):
         encoded_url = f'{url}?{query_string}'   
     else:
         encoded_url = f'{url}{query_string}'
-    return encoded_url
+    return encoded_url    
 
 def format_date(date_str):
     date_str = date_str.replace('SOLD  ', '')
