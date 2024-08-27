@@ -115,6 +115,12 @@ export const productFilters = async () =>{
   const Token = getUserauth()
   return fetch(url,{method:"GET", headers: { Authorization: 'Bearer ' + Token }}).then(response => response.json() )
 }
+export const getUsersdata = async (data) =>{
+  const url = Urls.userDetail
+  const Token = getUserauth()
+  return fetch(url+data.id+'/',{method:"PUT", headers: { Authorization: 'Bearer ' + Token },body:JSON.stringify(data)}).then(response => response.json() )
+}
+
 
 
 
@@ -124,5 +130,4 @@ export const productFilters = async () =>{
 // if(dataCopy[x] == null){
 // dataCopy[x] = ''
 // }
-
 // function to perform conversion of null to empty string

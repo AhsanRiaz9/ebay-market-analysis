@@ -236,8 +236,10 @@ import VueCtkDateTimePicker from 'vue-ctk-date-time-picker'
 import { useStore } from 'vuex'
 
 export default {
-  components: { ExclamationCircleIcon, KTDatatable, SearchIcon, VueCtkDateTimePicker },
-  setup() {
+  components: {ExclamationCircleIcon, KTDatatable, SearchIcon, VueCtkDateTimePicker},
+
+setup() {
+
     const searchKeyword = ref('')
     const currentPage = ref(1)
     const rowsPerPage = ref(10)
@@ -258,6 +260,7 @@ export default {
       { key: 'last30Days', label: 'Last 30 days', value: 30 },
       { key: 'last90Days', label: 'Last 90 days', value: 90 }
     ]
+
     const data = ref({
       title: searchKeyword?.value,
       name: 'ebay.com.au',
@@ -274,6 +277,7 @@ export default {
       lock_statuses: null,
       page_size: rowsPerPage?.value
     })
+
 
     function handlelogout() {
       store.dispatch('handleAccesstoken', null)
@@ -364,7 +368,11 @@ export default {
       if (data.value.maxPrice || data.value.minPrice) {
         if (data.value.maxPrice < 0 || data.value.minPrice < 0) {
           toast.error('Min/Max price should be greater or equal to zero', { autoClose: 3000 })
-        } else {
+        }
+        else if (data.value.maxPrice < data.value.minPrice){
+          toast.error('Max price should be greater or equal Min price', { autoClose: 3000 })
+        }
+        else {
           callproductsApi()
         }
       }
@@ -487,6 +495,7 @@ data.value.date_range = date.value.start.concat(' to ',date.value.end)
         sortable: false
       }
     ])
+
     const current_change = async (page_number) => {
       currentPage.value = page_number
       callproductsApi(page_number)

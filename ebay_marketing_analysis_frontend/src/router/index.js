@@ -129,6 +129,12 @@ const defaultChildRoutes = (prefix) => [
     component: () => import('@/views/product-research/indexPage.vue')
   },
   {
+    path: '/competitive-analysis',
+    name: prefix+'.competitive-analysis',
+    meta: { auth: true, name: 'Home', isBanner: true },
+    component: () => import('@/views/competitive-analysis/indexPage.vue')
+  },
+  {
     path: '/title-analysis',
     name: prefix+'.title-analysis',
     meta: { auth: true, name: 'Home', isBanner: true },
