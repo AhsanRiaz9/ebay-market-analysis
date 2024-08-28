@@ -1,6 +1,6 @@
 from celery import shared_task
 from product_configuration.models import Category
-from scraping_scheduler.models import ScrapingProcess, MobileScrapingProcess
+from scraping_scheduler.models import ScrapingProcess, MobileScrapingProcess, SpecificProductProcess
 from django.utils import timezone
 from datetime import timedelta
 from ebay_products.models import MobilePhone, ActiveMobilePhone, ProductRankCounter
@@ -8,6 +8,7 @@ import os
 import requests
 import datetime
 from settings.utilis.slack_bot import generate_mobile_phone_scraping_report
+from ebay_products.utilis.scrapers import SpecificProductScraper
 
 @shared_task
 def mobile_phone_scraping_scheduler(category_id, new_process=False, first_process=False):
@@ -68,9 +69,25 @@ def request_scraping(category_id):
         print(resp)
     except Exception as e:
         print(f'Error occurred: {str(e)}')
-            
+
+@shared_task
+def download_specific_products_scraping():
+    specific_product_scraper = SpecificProductScraper()
+    print('Download Specific Products Scraping Started')
+    while True:
+        process = SpecificProductProcess.objects.filter(status__in=['pending', 'running']).order_by('created_at').first()
+        if process:
+            if process.status == 'pending':
+                process.status = 'running'
+                process.save()
+            is_completed = specific_product_scraper.scrap_products(process.url, process.is_sold_listing)
+            if is_completed == True:
+                process.status = 'completed'
+                process.save()
 try:
     mobile_phone_scraping_scheduler.delay(category_id=9355, new_process=True, first_process=True)
+    download_specific_products_scraping.delay()
 except Exception as e:
     print(f'Error occurred: {str(e)}')
+
 

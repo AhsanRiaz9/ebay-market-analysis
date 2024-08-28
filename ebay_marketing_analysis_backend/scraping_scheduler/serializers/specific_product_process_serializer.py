@@ -10,7 +10,8 @@ class SpecificProductProcessSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         response =  super().to_representation(instance)
+        response['status'] = instance.status.capitalize()
         response['created_at'] = date_format(instance.created_at)
         response['created_by'] = instance.created_by.name if instance.created_by else ''
         return response
-    
+
