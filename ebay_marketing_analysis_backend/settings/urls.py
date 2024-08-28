@@ -16,4 +16,5 @@ urlpatterns = [
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('product_configuration/', include('product_configuration.urls')),
     path('ebay_products/', include('ebay_products.urls')),
+    path('scraping_scheduler/', include('scraping_scheduler.urls')),
 ]

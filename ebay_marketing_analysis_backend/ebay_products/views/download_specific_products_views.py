@@ -1,7 +1,6 @@
 import time
 from rest_framework import status
 from rest_framework.views import APIView
-import threading
 from rest_framework.response import Response
 from settings.utilis.helpers import SeleniumWebDriver, create_encoded_url, decode_string,  format_date, check_internet_connection, create_internet_connection, check_webdriver_close_exception, refresh_ip
 from product_configuration.models import BrandCategory, ColorCategory, Category, Storage, ProductModel, ProductModelCategory, Condition, ConditionCategory, LockStatus, Location, Brand, Color, EbayDomain
@@ -10,18 +9,57 @@ import threading
 from tqdm import tqdm
 from selenium.webdriver.common.by import By
 import time
-
+from rest_framework.permissions import IsAuthenticated
+from role_management.models import CustomUser
+from role_management.permissions import HasPermission
+from scraping_scheduler.models import SpecificProductProcess
+from settings.utilis.helpers import decode_string
 
 class DownloadSpecificProductsView(APIView):
+    
+    def allowed_permission(self):
+        if self.request.method == "POST":
+            required_permission_code = "download_specific_products"
+        return required_permission_code
+
+    permission_classes = [IsAuthenticated, ]
+    
     def post(self, request, *args, **kwargs):
-        scraping_url = request.data.get('scraping_url', '')
-        scraping_type = request.data.get('scraping_type', '').strip().lower()
+        listing_types = {
+            'buy_it_now': {'LH_BIN': 1,}, 
+            'sold_listing': {'LH_Complete': 1, 'LH_Sold': 1, '_sop': 10}
+        }
+        params = request.data
+        scraping_url = params.get('scraping_url', '')
+        both_listing = params.get('both_listing', False)
+        notes = params.get('notes', '')
+        custom_user = None
+        if request.user:
+            custom_user = CustomUser.objects.filter(id=request.user.id).first()
         if scraping_url:
-            scraping_thread = threading.Thread(target=self.scrap_products, args=[scraping_url, scraping_type], daemon=True)
-            scraping_thread.start()
-            return Response({'message': f'Background job started to download specific product against url: {scraping_url}'})
+            if both_listing == True:
+                scraping_url = scraping_url.replace('LH_BIN=1', '')
+                scraping_url = scraping_url.replace('LH_Sold=1', '').replace('LH_Complete=1', '').replace('_sop=10', '')
+                scraping_url = scraping_url.replace('&&', '&')
+            listing_type = self.get_listing_type(scraping_url)
+            if listing_type == 'both':
+                sold_url = create_encoded_url(scraping_url, listing_types['sold_listing'])
+                active_url = create_encoded_url(scraping_url, listing_types['buy_it_now'])
+                SpecificProductProcess.objects.create(url=sold_url, notes=notes, is_sold_listing=True, created_by=custom_user, status='pending')
+                SpecificProductProcess.objects.create(url=active_url, notes=notes, is_sold_listing=False, created_by=custom_user, status='pending')
+            else:
+                SpecificProductProcess.objects.create(url=scraping_url, notes=notes, is_sold_listing=listing_type == 'sold', created_by=custom_user, status='pending')
+            return Response({'message': f'Download specific products process is added in queue for url: {scraping_url}'})
         else:
             return Response({'detail': 'Scraping URL not provided'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    def get_listing_type(self, url):
+        if 'LH_BIN' in url:
+            return 'active'
+        elif 'LH_Sold' in url:
+            return 'sold'
+        else:
+            return 'both'
     
     def scrap_products(self, scraping_url, scraping_type):
         params = {}
