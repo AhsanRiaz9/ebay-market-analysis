@@ -72,7 +72,7 @@ def request_scraping(category_id):
         print(f'Error occurred: {str(e)}')
 
 @shared_task
-def download_specific_products_scraping():
+def download_specific_products_scheduler():
     specific_product_scraper = SpecificProductScraper()
     print('Download Specific Products Scraping Started')
     while True:
@@ -85,14 +85,13 @@ def download_specific_products_scraping():
             process.status = 'completed' if is_completed else 'failed'
             process.save()
         else:
-            time.sleep(60)
             failed_processes = SpecificProductProcess.objects.filter(status='failed')
             failed_processes.update(status='pending')
-            
+        time.sleep(60)
             
 try:
     mobile_phone_scraping_scheduler.delay(category_id=9355, new_process=True, first_process=True)
-    download_specific_products_scraping.delay()
+    # download_specific_products_scheduler.delay()
 except Exception as e:
     print(f'Error occurred: {str(e)}')
 
