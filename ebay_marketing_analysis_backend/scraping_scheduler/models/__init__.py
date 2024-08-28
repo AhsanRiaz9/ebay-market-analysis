@@ -1,1 +1,2 @@
-from .scraping_processes import ScrapingProcess, MobileScrapingProcess
+from .scraping_process import ScrapingProcess, MobileScrapingProcess
+from .specific_product_process import SpecificProductProcess
