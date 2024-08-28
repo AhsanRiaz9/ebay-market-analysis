@@ -5,6 +5,7 @@ from django.utils import timezone
 from datetime import timedelta
 from ebay_products.models import MobilePhone, ActiveMobilePhone, ProductRankCounter
 import os
+import time
 import requests
 import datetime
 from settings.utilis.slack_bot import generate_mobile_phone_scraping_report
@@ -81,9 +82,14 @@ def download_specific_products_scraping():
                 process.status = 'running'
                 process.save()
             is_completed = specific_product_scraper.scrap_products(process.url, process.is_sold_listing)
-            if is_completed == True:
-                process.status = 'completed'
-                process.save()
+            process.status = 'completed' if is_completed else 'failed'
+            process.save()
+        else:
+            time.sleep(60)
+            failed_processes = SpecificProductProcess.objects.filter(status='failed')
+            failed_processes.update(status='pending')
+            
+            
 try:
     mobile_phone_scraping_scheduler.delay(category_id=9355, new_process=True, first_process=True)
     download_specific_products_scraping.delay()
