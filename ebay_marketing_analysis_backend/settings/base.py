@@ -35,6 +35,7 @@ CUSTOM_APPS = [
     'ebay_products',
     'scraping_scheduler',
     'role_management',
+    'competitor_analysis',
 ]
 
 THIRD_PARTY_APPS = [
