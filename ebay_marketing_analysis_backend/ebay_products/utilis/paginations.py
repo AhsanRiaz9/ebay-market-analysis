@@ -17,7 +17,7 @@ class CutstomPagination(PageNumberPagination):
             if page_size <= self.max_page_size:
                 self.page_size = int(page_size)
     
-    def get_paginated_response(self, data, kwargs={}):
+    def get_paginated_data(self, data, kwargs={}):
         self.update_page_size()
         response = {
             'links': {
@@ -34,6 +34,9 @@ class CutstomPagination(PageNumberPagination):
             response.update(kwargs)
         return response
     
+    def get_paginated_response(self, data, kwargs={}):
+        return Response(self.get_paginated_data(data, kwargs))
+    
 class MobilePhoneCustomPagination(CutstomPagination):
     page_size = 30
     page_size_query_param = 'page_size'
@@ -49,7 +52,7 @@ class MobilePhoneCustomPagination(CutstomPagination):
             else:
                 sell_through = 0.0
             extra_output['analytics']['sell_through'] = format_number(sell_through)
-        response = self.get_paginated_response(data, extra_output)
+        response = self.get_paginated_data(data, extra_output)
         return Response(response)
     
     def get_price_anlytics(self, queryset):
