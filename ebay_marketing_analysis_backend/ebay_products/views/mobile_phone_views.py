@@ -3,6 +3,7 @@ from ebay_products.serializers import MobilePhoneSerializer, ActiveMobilePhoneSe
 from ebay_products.models import MobilePhone, ActiveMobilePhone
 from ebay_products.utilis.paginations import MobilePhoneCustomPagination
 from rest_framework.permissions import IsAuthenticated
+from product_configuration.models import Category
 
 class MobilePhoneListView(APIView, MobilePhoneCustomPagination):
     
@@ -77,4 +78,12 @@ class MobilePhoneListView(APIView, MobilePhoneCustomPagination):
         if lock_statuses:
             lock_statuses = lock_statuses.split(',')
             queryset = queryset.filter(lock_status__id__in=lock_statuses)
+        category_id = params.get('category', '')
+        if category_id:
+            category = Category.objects.filter(ebay_category_id=category_id).first()
+            queryset = queryset.filter(category=category)
+        product_models = params.get('product_models', '')
+        if product_models:
+            product_models = product_models.split(',')
+            queryset = queryset.filter(id__in=product_models)
         return queryset

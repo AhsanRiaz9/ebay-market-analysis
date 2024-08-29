@@ -3,3 +3,6 @@ from .brands_serializers import BrandCategorySerializer
 from .color_serializers import ColorCategorySerializer
 from .storage_serializers import StorageSerializer
 from .lock_status_serializers import LockStatusSerializer
+from .category_serializers import CategorySerializer
+from .product_models_serializers import ProductModelCategorySerializer
+
