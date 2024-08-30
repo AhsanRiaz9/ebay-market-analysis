@@ -17,6 +17,9 @@ const ebay_products = baseUrl + 'ebay_products/mobile_phones/?page='
 const conditions = baseUrl + 'product_configuration/conditions/'
 const tokenValidate = baseUrl + 'api/token/validate/'
 const productFilters = baseUrl + 'product_configuration/product_filters/'
+const scraping_info = baseUrl + 'ebay_products/download_specific_products/'
+const product_processes = baseUrl + 'scraping_scheduler/specific_product_processes/'
+const product_categories = baseUrl + '/product_configuration/categories/'
 
 
 const URLS = {
@@ -36,7 +39,10 @@ const URLS = {
     ebay_products,
     conditions,
     tokenValidate,
-    productFilters
+    productFilters,
+    scraping_info,
+    product_processes,
+    product_categories
 }
 
 export default URLS

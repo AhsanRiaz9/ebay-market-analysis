@@ -1,9 +1,12 @@
 <template>
   <div>
     <div class="w-100 p-2 rounded-2 d-flex align-items-center px-4 main-head" style="background-color: white">
-      <div class="w-25"><p class="platform">eBay</p></div>
+      <div class="w-25">
+        <p class="platform">eBay</p>
+      </div>
       <div class="w-50 d-flex align-items-center">
-        <div class="searchbox"><search-icon /> <input @input="searchdataApi" v-model="searchKeyword" type="text" placeholder="Search" class="searchbar" /></div>
+        <div class="searchbox"><search-icon /> <input @input="searchdataApi" v-model="searchKeyword" type="text"
+            placeholder="Search" class="searchbar" /></div>
         <div></div>
       </div>
       <!-- <button class="searchbtn">Search</button> -->
@@ -16,7 +19,8 @@
             <h6 class="fw-semibold">Marketplace</h6>
             <exclamation-circle-icon />
           </div>
-          <v-select v-model="data.name" clearable class="selectinput" label="Select marketplace" :items="['ebay.com.au']" @update:modelValue="callproductsApi()" variant="underlined"></v-select>
+          <v-select v-model="data.name" clearable class="selectinput" label="Select marketplace"
+            :items="['ebay.com.au']" @update:modelValue="callproductsApi()" variant="underlined"></v-select>
         </div>
       </div>
       <div class="col-lg-4 col-md-6 col-sm-12 col-xl-3">
@@ -26,7 +30,8 @@
             <h6 class="fw-semibold">Shipping location</h6>
             <exclamation-circle-icon />
           </div>
-          <v-select clearable class="selectinput" v-model="data.shippingLocation" label="Select shipping location" :items="['Australia']" variant="underlined" @update:modelValue="callproductsApi()"></v-select>
+          <v-select clearable class="selectinput" v-model="data.shippingLocation" label="Select shipping location"
+            :items="['Australia']" variant="underlined" @update:modelValue="callproductsApi()"></v-select>
         </div>
       </div>
       <div class="col-lg-4 col-md-6 col-sm-12 col-xl-3">
@@ -36,7 +41,8 @@
             <h6 class="fw-semibold">Data category</h6>
             <exclamation-circle-icon />
           </div>
-          <v-select class="selectinput" v-model="data.dataCategory" label="Select data category" :items="['Active', 'Sold']" variant="underlined" @update:modelValue="callproductsApi()"></v-select>
+          <v-select class="selectinput" v-model="data.dataCategory" label="Select data category"
+            :items="['Active', 'Sold']" variant="underlined" @update:modelValue="callproductsApi()"></v-select>
         </div>
       </div>
       <div class="col-lg-4 col-md-6 col-sm-12 col-xl-3">
@@ -66,7 +72,9 @@
             <exclamation-circle-icon />
           </div>
 
-          <VueCtkDateTimePicker id="my_date" range :format="'YYYY-MM-DD'" formatted="YYYY-MM-DD" :onlyDate="true" color="#3a57e8" noTime="true" :custom-shortcuts="custom_shortcuts" v-model="date" @update:modelValue="changeDateformat" />
+          <VueCtkDateTimePicker id="my_date" range :format="'YYYY-MM-DD'" formatted="YYYY-MM-DD" :onlyDate="true"
+            color="#3a57e8" noTime="true" :custom-shortcuts="custom_shortcuts" v-model="date"
+            @update:modelValue="changeDateformat" />
         </div>
       </div>
       <div class="col-lg-4 col-md-6 col-sm-12 col-xl-3">
@@ -76,7 +84,19 @@
             <h6 class="fw-semibold">Exclude phrase</h6>
             <exclamation-circle-icon />
           </div>
-          <input class="pt-5 mt-2 exclude-phrase" v-model="data.excludedPhrase" @input="callproductsApi()" style="border-bottom: 2px solid black" placeholder="Comma separated phrase" type="text" />
+          <input class="pt-5 mt-2 exclude-phrase" v-model="data.excludedPhrase" @input="callproductsApi()"
+            style="border-bottom: 2px solid black" placeholder="Comma separated phrase" type="text" />
+        </div>
+      </div>
+      <div class="col-lg-4 col-md-6 col-sm-12 col-xl-3">
+        <div class="section">
+          <div class="d-flex justify-content-between">
+            <div></div>
+            <h6 class="fw-semibold">Category</h6>
+            <exclamation-circle-icon />
+          </div>
+          <v-select class="selectinput" v-model="data.categories" label="Select category" :items="category"
+            variant="underlined" @update:modelValue="callproductsApi()"></v-select>
         </div>
       </div>
       <div v-for="(item, index) in productfilter" :key="index" class="col-lg-4 col-md-6 col-sm-12 col-xl-3">
@@ -84,29 +104,46 @@
           <div class="d-flex justify-content-between">
             <div></div>
             <h6 class="fw-semibold">{{ index.charAt(0).toUpperCase() + index.slice(1) }}</h6>
-            <exclamation-circle-icon />
+            <v-tooltip v-if="index == 'product_models'" location='top'
+              text="product Models can only be visible once category has been selected">
+              <template v-slot:activator="{ props }">
+                <exclamation-circle-icon v-bind="props" />
+              </template>
+            </v-tooltip>
+            <exclamation-circle-icon v-else />
           </div>
-          <v-autocomplete style="font-weight: 700;" multiple v-model="data[index]" @update:modelValue="callproductsApi()" class="selectinput" clearable :label="index?.charAt(0).toUpperCase() + index?.slice(1)" :items="item && item?.map((items) => ({ name: items?.name || items?.value, id: items?.ebay_condition_id || items?.id }))" item-title="name" item-value="id" variant="underlined"></v-autocomplete>
+          
+          <v-autocomplete v-if="index != 'product_models'" style="font-weight: 700;" multiple v-model="data[index]" @update:modelValue="callproductsApi()"
+            class="selectinput" clearable :label="index?.charAt(0).toUpperCase() + index?.slice(1)"
+            :items="item && item?.map((items) => ({ name: items?.name || items?.value, id: items?.ebay_condition_id || items?.id }))"
+            item-title="name" item-value="id" variant="underlined"></v-autocomplete>
+          <v-autocomplete v-else-if="index == 'product_models' && data.categories" style="font-weight: 700;" multiple v-model="data[index]" @update:modelValue="callproductsApi()"
+            class="selectinput" clearable :label="index?.charAt(0).toUpperCase() + index?.slice(1)"
+            :items="item && item?.map((items) => ({ name: items?.name || items?.value, id: items?.ebay_condition_id || items?.id }))"
+            item-title="name" item-value="id" variant="underlined"></v-autocomplete>
         </div>
       </div>
 
-      <div v-if="data.dataCategory == 'Active'" class="w-100 position-relative rounded-3 stats p-4 d-flex justify-content-evenly">
+      <div v-if="data.dataCategory == 'Active'"
+        class="w-100 position-relative rounded-3 stats p-4 d-flex justify-content-evenly">
         <div v-if="loading" class="skeleton d-flex"></div>
         <div class="d-flex gap-3">
           <div>
             <h5>${{ Number(analytics?.avg_price).toFixed(2) }}</h5>
             <p style="font-size: 11px; display: inline; margin-right: 10px">Avg. active price</p>
 
-            <v-tooltip location='top' text="The mean active price per item for similar listings, not including postage costs.">
+            <v-tooltip location='top'
+              text="The mean active price per item for similar listings, not including postage costs.">
               <template v-slot:activator="{ props }">
                 <exclamation-circle-icon v-bind="props" />
               </template>
             </v-tooltip>
           </div>
           <div>
-            <h5> ${{ analytics?.min_price }} -  ${{ analytics?.max_price }}</h5>
+            <h5> ${{ analytics?.min_price }} - ${{ analytics?.max_price }}</h5>
             <p style="font-size: 11px; display: inline; margin-right: 10px">Active price range</p>
-            <v-tooltip location='top' text="The minimun and maximum active price for similar lisitng, not including postage costs. ">
+            <v-tooltip location='top'
+              text="The minimun and maximum active price for similar lisitng, not including postage costs. ">
               <template v-slot:activator="{ props }">
                 <exclamation-circle-icon v-bind="props" />
               </template>
@@ -118,7 +155,8 @@
           <div>
             <h5>${{ Number(analytics?.avg_postage) }}</h5>
             <p style="font-size: 11px; display: inline; margin-right: 10px">Avg. postage</p>
-            <v-tooltip location='top' text="The average postage cost to be paid by the buyer this average doesn't include listings with free postage.">
+            <v-tooltip location='top'
+              text="The average postage cost to be paid by the buyer this average doesn't include listings with free postage.">
               <template v-slot:activator="{ props }">
                 <exclamation-circle-icon v-bind="props" />
               </template>
@@ -142,13 +180,15 @@
           </div>
         </div>
       </div>
-      <div v-if="data.dataCategory == 'Sold'" class="w-100 position-relative rounded-3 stats p-4 d-flex justify-content-evenly">
+      <div v-if="data.dataCategory == 'Sold'"
+        class="w-100 position-relative rounded-3 stats p-4 d-flex justify-content-evenly">
         <div v-if="loading" class="skeleton d-flex"></div>
         <div class="d-flex gap-3">
           <div>
             <h5>${{ analytics?.avg_price }}</h5>
             <p style="font-size: 11px;display:inline;margin-right: 10px">Avg. sold price</p>
-            <v-tooltip location='top' text="The mean sold price per item for similar listings, not including postage costs.">
+            <v-tooltip location='top'
+              text="The mean sold price per item for similar listings, not including postage costs.">
               <template v-slot:activator="{ props }">
                 <exclamation-circle-icon v-bind="props" />
               </template>
@@ -157,7 +197,8 @@
           <div>
             <h5>${{ analytics?.min_price }} - ${{ analytics?.max_price }}</h5>
             <p style="font-size: 11px; display: inline; margin-right: 10px">Sold price range</p>
-            <v-tooltip location='top' text="The minimun and maximum sold price for similar lisitng, not including postage costs. ">
+            <v-tooltip location='top'
+              text="The minimun and maximum sold price for similar lisitng, not including postage costs. ">
               <template v-slot:activator="{ props }">
                 <exclamation-circle-icon v-bind="props" />
               </template>
@@ -169,7 +210,8 @@
           <div>
             <h5>${{ analytics?.avg_postage }}</h5>
             <p style="font-size: 11px; display: inline; margin-right: 10px">Avg. postage</p>
-            <v-tooltip location='top' text="The average postage cost to be paid by the buyer this average doesn't include listings with free postage.">
+            <v-tooltip location='top'
+              text="The average postage cost to be paid by the buyer this average doesn't include listings with free postage.">
               <template v-slot:activator="{ props }">
                 <exclamation-circle-icon v-bind="props" />
               </template>
@@ -207,13 +249,16 @@
       </div>
 
       <div class="py-3" style="background-color: white">
-        <KTDatatable :enable-items-per-page-dropdown="true" :table-data="results ? results : []" :table-header="headerConfig" :loading="loading" :total="total ? total : total" :rowsPerPage="rowsPerPage" :currentPage="currentPage" @current-change="current_change" @items-per-page-change="items_per_page_change">
+        <KTDatatable :enable-items-per-page-dropdown="true" :table-data="results ? results : []"
+          :table-header="headerConfig" :loading="loading" :total="total ? total : total" :rowsPerPage="rowsPerPage"
+          :currentPage="currentPage" @current-change="current_change" @items-per-page-change="items_per_page_change">
           <template v-slot:cell-title="{ row: product }">
             <a :href="product?.product_url" target="_blank">{{ product.title }}</a>
           </template>
 
           <template v-slot:cell-image="{ row: product }">
-          <a :href="product?.product_url"><img :src="product.image" alt="product_image" width="100" height="100" /></a>
+            <a :href="product?.product_url"><img :src="product.image" alt="product_image" width="100"
+                height="100" /></a>
           </template>
           <template v-slot:cell-ebay_item_id="{ row: product }">
             <a :href="product.product_url" target="_blank">{{ product.ebay_item_id }}</a>
@@ -229,21 +274,21 @@ import ExclamationCircleIcon from '@/components/icons/outlined/svg-icons/Exclama
 import KTDatatable from '@/components/kt-datatable/KTDatatable.vue'
 import { onMounted, ref } from 'vue'
 import SearchIcon from '@/components/icons/outlined/svg-icons/SearchIcon.vue'
-import { callProducts, productFilters } from '@/service'
+import { callProducts, productFilters, product_categories } from '@/service'
 import { toast } from 'vue3-toastify'
 import { useRouter } from 'vue-router'
 import VueCtkDateTimePicker from 'vue-ctk-date-time-picker'
 import { useStore } from 'vuex'
 
 export default {
-  components: {ExclamationCircleIcon, KTDatatable, SearchIcon, VueCtkDateTimePicker},
+  components: { ExclamationCircleIcon, KTDatatable, SearchIcon, VueCtkDateTimePicker },
 
-setup() {
-
+  setup() {
     const searchKeyword = ref('')
     const currentPage = ref(1)
     const rowsPerPage = ref(10)
     const results = ref('')
+    const category = ref([])
     const total = ref(0)
     const records = ref(0)
     const loading = ref(false)
@@ -275,7 +320,9 @@ setup() {
       brands: null,
       storages: null,
       lock_statuses: null,
-      page_size: rowsPerPage?.value
+      page_size: rowsPerPage?.value,
+      categories: null,
+
     })
 
 
@@ -343,15 +390,15 @@ setup() {
         if (start && end) {
           dateJoin = start.concat(' to ', end)
         }
-        else{
-          if(start){
-            date.value =  {"start":start} 
+        else {
+          if (start) {
+            date.value = { "start": start }
           }
         }
         data.value.date_range = dateJoin || start
         callproductsApi()
       }
-      else{
+      else {
         data.value.date_range = date.value
         callproductsApi()
       }
@@ -369,7 +416,7 @@ setup() {
         if (data.value.maxPrice < 0 || data.value.minPrice < 0) {
           toast.error('Min/Max price should be greater or equal to zero', { autoClose: 3000 })
         }
-        else if (data.value.maxPrice < data.value.minPrice){
+        else if (data.value.maxPrice < data.value.minPrice) {
           toast.error('Max price should be greater or equal Min price', { autoClose: 3000 })
         }
         else {
@@ -379,14 +426,24 @@ setup() {
     }
 
     onMounted(async () => {
+      try {
+        const response = await product_categories()
+
+        if (response) {
+          category.value.push(response.at(0).name)
+        }
+      }
+      catch (err) {
+        console.log(err)
+      }
       const today = new Date();
-function formatDate(date) {
-return new Intl.DateTimeFormat('en-CA').format(date);
-}
-const startDate = formatDate(new Date(today.setDate(today.getDate() - 30)));
-const endDate = formatDate(new Date());
-date.value = {'start':startDate,'end':endDate,'shortcut':30}
-data.value.date_range = date.value.start.concat(' to ',date.value.end)
+      function formatDate(date) {
+        return new Intl.DateTimeFormat('en-CA').format(date);
+      }
+      const startDate = formatDate(new Date(today.setDate(today.getDate() - 30)));
+      const endDate = formatDate(new Date());
+      date.value = { 'start': startDate, 'end': endDate, 'shortcut': 30 }
+      data.value.date_range = date.value.start.concat(' to ', date.value.end)
 
 
       loading.value = true
@@ -425,6 +482,13 @@ data.value.date_range = date.value.start.concat(' to ',date.value.end)
         loading.value = false
       } finally {
         loading.value = false
+      }
+
+
+      const link = store.getters.productlink
+      searchKeyword.value = link
+      if(searchKeyword.value){
+        searchdataApi()
       }
     })
 
@@ -530,6 +594,7 @@ data.value.date_range = date.value.start.concat(' to ',date.value.end)
       productfilter,
       filterNames,
       analytics,
+      category
 
     }
   }
@@ -549,9 +614,11 @@ data.value.date_range = date.value.start.concat(' to ',date.value.end)
 .stats {
   background: #f1f1f2;
 }
+
 p {
   margin-bottom: 0px;
 }
+
 .vertical-line {
   width: 2px;
   height: 100%;
@@ -568,24 +635,30 @@ p {
   font-size: 14px;
   width: 100%;
 }
+
 :deep(.field-label) {
   color: black !important;
 }
+
 :deep(#my_date-input)::placeholder {
   color: black !important;
   font-weight: 600 !important;
   font-size: 17px;
 }
+
 .main-head {
   min-height: 50px;
 }
+
 .exclude-phrase::placeholder {
   color: black;
   font-weight: 600;
 }
+
 * {
   color: black;
 }
+
 .searchbox {
   border: 2px solid black;
   width: 70%;
@@ -593,17 +666,21 @@ p {
   border-radius: 10px;
   padding-inline: 10px;
 }
+
 :deep(.v-field__outline) {
   --v-field-border-width: 2px;
   --v-field-border-opacity: 1;
 }
+
 :deep(.v-label) {
   opacity: 1;
 }
+
 .selectinput {
   color: black;
   font-weight: 600;
 }
+
 .section {
   background-color: white;
   border: 1px solid #dddfe2;
@@ -615,6 +692,7 @@ p {
   display: flex;
   flex-direction: column;
 }
+
 .platform {
   /* border-bottom: 3px solid #3a57e8; */
   width: 8rem;
@@ -625,11 +703,13 @@ p {
   text-align: center;
   margin: 0;
 }
+
 .searchbar {
   width: 70%;
   padding: 0.3rem;
   outline: none;
 }
+
 .searchbtn {
   border: 2px solid black;
   color: black;
@@ -640,6 +720,7 @@ p {
   padding: 0.3rem 0.2rem;
   background-color: transparent;
 }
+
 .pricerangeinput {
   border: none;
   outline: none;
@@ -647,6 +728,7 @@ p {
   width: 100%;
   text-align: center;
 }
+
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;

@@ -6,7 +6,7 @@
       <side-menu isTag="router-link" title="Dashboard" icon="view-grid" :route="{ to: 'default.dashboard' }"></side-menu>
     
       <side-menu isTag="router-link" title="Product Research" icon="view-grid" :route="{to:'default.product-research'}"></side-menu>
-      <side-menu isTag="router-link" title="Competitive Analysis" icon="view-grid" :route="{to:'default.competitive-analysis'}"></side-menu>
+      <side-menu isTag="router-link" title="Download Products" icon="view-grid" :route="{to:'default.download-products'}"></side-menu>
       <side-menu v-if="role == 'superadmin'" isTag="router-link" title="Title Analysis" icon="view-grid" :route="{to:'default.title-analysis'}"></side-menu>
       
       <li><hr class="hr-horizontal" /></li>
