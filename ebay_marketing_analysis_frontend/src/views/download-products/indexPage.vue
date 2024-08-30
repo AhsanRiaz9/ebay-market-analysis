@@ -101,7 +101,7 @@ export default {
     const items_per_page_change = (items_per_page) => {
       loading.value = true
       rowsPerPage.value = items_per_page
-      product_processes(`?page_size=${items_per_page}`).then((response) => {
+      product_processes(`?page=${currentPage.value}&page_size=${items_per_page}`).then((response) => {
         result.value = response
         loading.value = false
       })

@@ -95,7 +95,8 @@
             <h6 class="fw-semibold">Category</h6>
             <exclamation-circle-icon />
           </div>
-          <v-select class="selectinput" v-model="data.categories" label="Select category" :items="category"
+          <v-select class="selectinput" v-model="data.categories" label="Select category"  :items="category && category?.map(items => ({ name: items?.name || items?.name, id: items?.ebay_category_id || items?.ebay_category_id }))"
+            item-title="name" item-value="id"
             variant="underlined" @update:modelValue="callproductsApi()"></v-select>
         </div>
       </div>
@@ -430,7 +431,7 @@ export default {
         const response = await product_categories()
 
         if (response) {
-          category.value.push(response.at(0).name)
+          category.value = response
         }
       }
       catch (err) {
