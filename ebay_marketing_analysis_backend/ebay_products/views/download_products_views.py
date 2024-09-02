@@ -20,8 +20,6 @@ import os
 class DownloadProductView(APIView):
     def get(self, request, category_id, *args, **kwargs):
         self.selenium_webdriver = None
-        os.system('killall -9 chrome')
-        time.sleep(30)
         t = threading.Thread(target=self.run_scraping_process, args=[category_id,], daemon=True)
         t.start()
         return Response({'message': f'Background job started to download product data of category {category_id}.'})
@@ -433,7 +431,7 @@ class DownloadProductView(APIView):
                         shipping_fee = item.find_elements(By.CSS_SELECTOR, 'span.bsig__logisticsCost')
                     if shipping_fee:
                         shipping_fee = shipping_fee[0].text.replace(',', '')
-                        if shipping_fee.lower() == 'free':
+                        if 'free' in shipping_fee.lower():
                             shipping_fee = 0.0
                         else:
                             shipping_fee = shipping_fee.split(' postage')[0].replace('AU $', '').strip()
