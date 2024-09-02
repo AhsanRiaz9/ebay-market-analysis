@@ -18,10 +18,13 @@
       :total="result.total_pages" :enable-items-per-page-dropdown="true" :rowsPerPage="rowsPerPage"
       :currentPage="currentPage" @current-change="current_change" @items-per-page-change="items_per_page_change">
       <template v-slot:cell-description="{ row: product }">
-        <router-link @click="store.dispatch('handleproductLink', product?.notes)"
+        <!-- <router-link @click="store.dispatch('handleproductLink', product?.notes)"
           :to="{ name: 'default.product-research' }">
           <p class="descrip-text">{{ product?.url }}</p>
-        </router-link>
+        </router-link> -->
+        
+          <p @click="navigateToproductresearch(product?.notes)" class="descrip-text">{{ product?.url }}</p>
+        
       </template>
 
 
@@ -65,6 +68,7 @@ import { scraping_info, product_processes } from '@/service';
 import { onMounted, ref } from 'vue';
 import { toast } from 'vue3-toastify';
 import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
 export default {
   components: { KTDatatable },
 
@@ -75,6 +79,7 @@ export default {
     const store = useStore()
     const rowsPerPage = ref(10)
     const loading = ref(false)
+    const router = useRouter()
     const list = ref([])
     const data = ref({
       scraping_url: '',
@@ -82,6 +87,9 @@ export default {
       notes: ''
     })
 
+function navigateToproductresearch (value='') {
+  router.push({name:'default.product-research',query:{value}})
+}
 
     const current_change = async (page_number) => {
       loading.value = true
@@ -157,7 +165,6 @@ export default {
           })
         }
         for (let x in data?.value) {
-          console.log(x)
           if (x == 'both_listing') {
             data.value[x] = false
           }
@@ -169,7 +176,9 @@ export default {
 
       }
       catch (err) {
-        console.log('Error in the api')
+        toast.error('Something went wrong !',{
+          autoClose: 3000
+        })
       }
     }
 
@@ -217,7 +226,9 @@ export default {
       items_per_page_change,
       loading,
       store,
-      redownload_data
+      redownload_data,
+      router,
+      navigateToproductresearch
     }
   }
 }
@@ -233,6 +244,8 @@ input::placeholder {
   max-width: 300px;
   overflow: hidden;
   text-overflow: ellipsis;
+  color: blue;
+  cursor: pointer;
 }
 
 .Category-Select {

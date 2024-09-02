@@ -11,7 +11,6 @@ export default createStore({
     permissions : null,
     role: null,
     username: null,
-    productlink : ''
   },
   getters: {
     shareOffcanvas: (state) => state.shareOffcanvas,
@@ -21,7 +20,6 @@ export default createStore({
     permissions : (state) => state.permissions,
     role : (state) => state.role,
     username: (state)=> state.username,
-    productlink : (state)=> state.productlink
   },
   mutations: {
     openBottomCanvasCommit(state, payload) {
@@ -46,9 +44,6 @@ export default createStore({
     handleusername: (state,payload)=>{
       state.username = payload
     },
-    handleproductLink : (state,payload) =>{
-      state.productlink = payload
-    }
   },
   actions: {
     openBottomCanvasAction({ commit }, payload) {
@@ -71,9 +66,6 @@ export default createStore({
     },
     handleusername({commit},payload){
       commit('handleusername',payload)
-    },
-    handleproductLink({commit},payload){
-      commit('handleproductLink',payload)
     },
   },
   modules: {

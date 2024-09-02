@@ -1,11 +1,12 @@
 <template>
   <div>
+    
     <div class="w-100 p-2 rounded-2 d-flex align-items-center px-4 main-head" style="background-color: white">
       <div class="w-25">
         <p class="platform">eBay</p>
       </div>
       <div class="w-50 d-flex align-items-center">
-        <div class="searchbox"><search-icon /> <input @input="searchdataApi" v-model="searchKeyword" type="text"
+        <div class="searchbox"><search-icon /> <input @input="!toggle && searchdataApi()" v-model="searchKeyword" type="text"
             placeholder="Search" class="searchbar" /></div>
         <div></div>
       </div>
@@ -20,7 +21,7 @@
             <exclamation-circle-icon />
           </div>
           <v-select v-model="data.name" clearable class="selectinput" label="Select marketplace"
-            :items="['ebay.com.au']" @update:modelValue="callproductsApi()" variant="underlined"></v-select>
+            :items="['ebay.com.au']" @update:modelValue=" !toggle && callproductsApi()" variant="underlined"></v-select>
         </div>
       </div>
       <div class="col-lg-4 col-md-6 col-sm-12 col-xl-3">
@@ -31,7 +32,7 @@
             <exclamation-circle-icon />
           </div>
           <v-select clearable class="selectinput" v-model="data.shippingLocation" label="Select shipping location"
-            :items="['Australia']" variant="underlined" @update:modelValue="callproductsApi()"></v-select>
+            :items="['Australia']" variant="underlined" @update:modelValue=" !toggle && callproductsApi()"></v-select>
         </div>
       </div>
       <div class="col-lg-4 col-md-6 col-sm-12 col-xl-3">
@@ -42,7 +43,7 @@
             <exclamation-circle-icon />
           </div>
           <v-select class="selectinput" v-model="data.dataCategory" label="Select data category"
-            :items="['Active', 'Sold']" variant="underlined" @update:modelValue="callproductsApi()"></v-select>
+            :items="['Active', 'Sold']" variant="underlined" @update:modelValue=" !toggle && callproductsApi()"></v-select>
         </div>
       </div>
       <div class="col-lg-4 col-md-6 col-sm-12 col-xl-3">
@@ -54,11 +55,11 @@
           </div>
           <div class="mt-auto gap-2 d-flex justify-content-around align-items-center px-4 pb-3">
             <div class="w-50">
-              <input @change="checkPrice" v-model="data.minPrice" type="number" class="pricerangeinput" />
+              <input @change=" !toggle && checkPrice()" v-model="data.minPrice" type="number" class="pricerangeinput" />
               <b class="text-center mx-auto d-block">Min</b>
             </div>
             <div class="w-50">
-              <input @change="checkPrice" v-model="data.maxPrice" type="number" class="pricerangeinput" />
+              <input @change=" !toggle && checkPrice()" v-model="data.maxPrice" type="number" class="pricerangeinput" />
               <b class="text-center mx-auto d-block">Max</b>
             </div>
           </div>
@@ -74,7 +75,7 @@
 
           <VueCtkDateTimePicker id="my_date" range :format="'YYYY-MM-DD'" formatted="YYYY-MM-DD" :onlyDate="true"
             color="#3a57e8" noTime="true" :custom-shortcuts="custom_shortcuts" v-model="date"
-            @update:modelValue="changeDateformat" />
+            @update:modelValue="!toggle && changeDateformat()" />
         </div>
       </div>
       <div class="col-lg-4 col-md-6 col-sm-12 col-xl-3">
@@ -84,7 +85,7 @@
             <h6 class="fw-semibold">Exclude phrase</h6>
             <exclamation-circle-icon />
           </div>
-          <input class="pt-5 mt-2 exclude-phrase" v-model="data.excludedPhrase" @input="callproductsApi()"
+          <input class="pt-5 mt-2 exclude-phrase" v-model="data.excludedPhrase" @input=" !toggle && callproductsApi()"
             style="border-bottom: 2px solid black" placeholder="Comma separated phrase" type="text" />
         </div>
       </div>
@@ -95,9 +96,9 @@
             <h6 class="fw-semibold">Category</h6>
             <exclamation-circle-icon />
           </div>
-          <v-select class="selectinput" v-model="data.categories" label="Select category"  :items="category && category?.map(items => ({ name: items?.name || items?.name, id: items?.ebay_category_id || items?.ebay_category_id }))"
+          <v-select class="selectinput" v-model="data.categories" label="Select category"  :items="category  ? category?.map(items => ({ name: items?.name || items?.name, id: items?.ebay_category_id || items?.ebay_category_id })) : []"
             item-title="name" item-value="id"
-            variant="underlined" @update:modelValue="callproductsApi()"></v-select>
+            variant="underlined" @update:modelValue=" !toggle && callproductsApi()"></v-select>
         </div>
       </div>
       <div v-for="(item, index) in productfilter" :key="index" class="col-lg-4 col-md-6 col-sm-12 col-xl-3">
@@ -114,23 +115,35 @@
             <exclamation-circle-icon v-else />
           </div>
           
-          <v-autocomplete v-if="index != 'product_models'" style="font-weight: 700;" multiple v-model="data[index]" @update:modelValue="callproductsApi()"
+          <v-autocomplete v-if="index != 'product_models'" style="font-weight: 700;" multiple v-model="data[index]" @update:modelValue=" !toggle && callproductsApi()"
             class="selectinput" clearable :label="index?.charAt(0).toUpperCase() + index?.slice(1)"
             :items="item && item?.map((items) => ({ name: items?.name || items?.value, id: items?.ebay_condition_id || items?.id }))"
             item-title="name" item-value="id" variant="underlined"></v-autocomplete>
-          <v-autocomplete v-else-if="index == 'product_models' && data.categories" style="font-weight: 700;" multiple v-model="data[index]" @update:modelValue="callproductsApi()"
+          <v-autocomplete v-else-if="index == 'product_models' && data.categories" style="font-weight: 700;" multiple v-model="data[index]" @update:modelValue=" !toggle && callproductsApi()"
             class="selectinput" clearable :label="index?.charAt(0).toUpperCase() + index?.slice(1)"
             :items="item && item?.map((items) => ({ name: items?.name || items?.value, id: items?.ebay_condition_id || items?.id }))"
             item-title="name" item-value="id" variant="underlined"></v-autocomplete>
         </div>
       </div>
 
+      <div class="form-check form-switch pl-0 custom-switch d-flex gap-2 align-items-center pt-3">
+      <label style="color: black" for="flexSwitchCheckDefault3">Auto Search</label>
+        <input style="height: 1.7em; width: 4em;" class="form-check-input ms-1 m-0" v-model="toggle" @click="() => {
+         toggle = !toggle
+        }" id="flexSwitchCheckDefault3" type="checkbox" />
+        <label style="color: black" for="flexSwitchCheckDefault3">Manual Search</label>
+      </div>
+      <div v-if="toggle" class="d-flex"><button @click="manualSearch()" class="btn btn-primary ml-auto">Apply</button></div>
+
+
+
+     
       <div v-if="data.dataCategory == 'Active'"
         class="w-100 position-relative rounded-3 stats p-4 d-flex justify-content-evenly">
         <div v-if="loading" class="skeleton d-flex"></div>
         <div class="d-flex gap-3">
           <div>
-            <h5>${{ Number(analytics?.avg_price).toFixed(2) }}</h5>
+            <h5>${{ analytics?.avg_price }}</h5>
             <p style="font-size: 11px; display: inline; margin-right: 10px">Avg. active price</p>
 
             <v-tooltip location='top'
@@ -151,10 +164,11 @@
             </v-tooltip>
           </div>
         </div>
+        
         <div class="vertical-line"></div>
         <div class="d-flex gap-3">
           <div>
-            <h5>${{ Number(analytics?.avg_postage) }}</h5>
+            <h5>${{ analytics?.avg_postage }}</h5>
             <p style="font-size: 11px; display: inline; margin-right: 10px">Avg. postage</p>
             <v-tooltip location='top'
               text="The average postage cost to be paid by the buyer this average doesn't include listings with free postage.">
@@ -164,7 +178,7 @@
             </v-tooltip>
           </div>
           <div>
-            <h5>{{ Number(analytics?.free_postage).toFixed(0) }}%</h5>
+            <h5>{{analytics?.free_postage }}%</h5>
             <p style="font-size: 11px; display: inline; margin-right: 10px">Free postage</p>
             <v-tooltip location='top' text="The percentage of sale that included free postage.">
               <template v-slot:activator="{ props }">
@@ -249,6 +263,7 @@
         </div>
       </div>
 
+
       <div class="py-3" style="background-color: white">
         <KTDatatable :enable-items-per-page-dropdown="true" :table-data="results ? results : []"
           :table-header="headerConfig" :loading="loading" :total="total ? total : total" :rowsPerPage="rowsPerPage"
@@ -277,7 +292,7 @@ import { onMounted, ref } from 'vue'
 import SearchIcon from '@/components/icons/outlined/svg-icons/SearchIcon.vue'
 import { callProducts, productFilters, product_categories } from '@/service'
 import { toast } from 'vue3-toastify'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import VueCtkDateTimePicker from 'vue-ctk-date-time-picker'
 import { useStore } from 'vuex'
 
@@ -288,16 +303,19 @@ export default {
     const searchKeyword = ref('')
     const currentPage = ref(1)
     const rowsPerPage = ref(10)
+    const route_Phrase = ref('')
     const results = ref('')
     const category = ref([])
     const total = ref(0)
     const records = ref(0)
     const loading = ref(false)
     const date = ref('')
+    const toggle = ref(false)
     const productfilter = ref([])
     const analytics = ref('')
     const filterNames = ref([])
     const router = useRouter()
+    const route = useRoute()
     const store = useStore()
     const custom_shortcuts = [
       { key: 'thisWeek', label: 'This week', value: 'isoWeek' },
@@ -306,7 +324,6 @@ export default {
       { key: 'last30Days', label: 'Last 30 days', value: 30 },
       { key: 'last90Days', label: 'Last 90 days', value: 90 }
     ]
-
     const data = ref({
       title: searchKeyword?.value,
       name: 'ebay.com.au',
@@ -326,7 +343,10 @@ export default {
 
     })
 
-
+function manualSearch () {
+searchdataApi() 
+  
+}
     function handlelogout() {
       store.dispatch('handleAccesstoken', null)
       store.dispatch('handlerole', null)
@@ -427,6 +447,8 @@ export default {
     }
 
     onMounted(async () => {
+
+      route_Phrase.value = route.query.value
       try {
         const response = await product_categories()
 
@@ -486,8 +508,7 @@ export default {
       }
 
 
-      const link = store.getters.productlink
-      searchKeyword.value = link
+      searchKeyword.value = route_Phrase.value
       if(searchKeyword.value){
         searchdataApi()
       }
@@ -595,7 +616,10 @@ export default {
       productfilter,
       filterNames,
       analytics,
-      category
+      category,
+      route_Phrase,
+      toggle,
+      manualSearch
 
     }
   }
