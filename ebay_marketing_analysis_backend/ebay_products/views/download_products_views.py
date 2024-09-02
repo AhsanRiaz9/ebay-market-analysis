@@ -48,6 +48,7 @@ class DownloadProductView(APIView):
             print(result)
             if status == False:
                 if error_type == 'internet_issue':
+                    refresh_ip()
                     create_internet_connection()
                     attempt += 1
                 elif error_type == 'webdriver_close_issue':

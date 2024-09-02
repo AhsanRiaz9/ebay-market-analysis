@@ -10,6 +10,7 @@ import requests
 import datetime
 from settings.utilis.slack_bot import generate_mobile_phone_scraping_report
 from ebay_products.utilis.scrapers import SpecificProductScraper
+from settings.utilis.helpers import refresh_ip
 
 @shared_task
 def mobile_phone_scraping_scheduler(category_id, new_process=False, first_process=False):
@@ -66,6 +67,7 @@ def mobile_analytics(is_sold_listing):
 def request_scraping(category_id):
     try:
         os.system('killall -9 chrome')
+        refresh_ip()
         time.sleep(15)
         resp = requests.get(f'http://127.0.0.1:8008/ebay_products/download_products/{category_id}/')
         print(resp)
