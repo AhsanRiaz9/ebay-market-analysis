@@ -21,7 +21,7 @@ class DownloadProductView(APIView):
     def get(self, request, category_id, *args, **kwargs):
         self.selenium_webdriver = None
         os.system('killall -9 chrome')
-        time.sleep(2)
+        time.sleep(30)
         t = threading.Thread(target=self.run_scraping_process, args=[category_id,], daemon=True)
         t.start()
         return Response({'message': f'Background job started to download product data of category {category_id}.'})
@@ -43,6 +43,7 @@ class DownloadProductView(APIView):
                 self.selenium_webdriver.close()
             print('Starting scraping process.')
             os.system('killall -9 chrome')
+            time.sleep(30)
             result = self.download_data(category_id)
             status = result['status']
             error_type = result['error_type']

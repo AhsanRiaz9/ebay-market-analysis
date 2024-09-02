@@ -66,6 +66,7 @@ def mobile_analytics(is_sold_listing):
 def request_scraping(category_id):
     try:
         os.system('killall -9 chrome')
+        time.sleep(30)
         resp = requests.get(f'http://127.0.0.1:8008/ebay_products/download_products/{category_id}/')
         print(resp)
     except Exception as e:
