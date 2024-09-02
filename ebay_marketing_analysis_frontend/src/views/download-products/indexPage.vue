@@ -133,14 +133,17 @@ function navigateToproductresearch (value='') {
 
 
     async function callProduct_process(value='') {
+      loading.value = true
       product_processes(value).then((response) => {
         result.value = response
         rowsPerPage.value = result.value.page_size
+        loading.value = false
       })
         .catch((error) => {
           toast.error(error, {
             autoClose: 2000
           })
+          loading.value = false
         })
     }
     onMounted(async () => {
@@ -156,8 +159,9 @@ function navigateToproductresearch (value='') {
           toast.success('Background job started, Please wait !', {
             autoClose: 2000
           })
+          loading.value = true
           await callProduct_process(`?page=${currentPage.value}&page_size=${rowsPerPage.value}`)
-
+          loading.value = false
         }
         else {
           toast.error('Something went wrong !', {

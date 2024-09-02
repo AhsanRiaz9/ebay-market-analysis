@@ -128,8 +128,11 @@
 
       <div class="form-check form-switch pl-0 custom-switch d-flex gap-2 align-items-center pt-3">
       <label style="color: black" for="flexSwitchCheckDefault3">Auto Search</label>
-        <input style="height: 1.7em; width: 4em;" class="form-check-input ms-1 m-0" v-model="toggle" @click="() => {
+        <input style="height: 1.7em; width: 4em;" class="form-check-input m-0" v-model="toggle" @click="() => {
          toggle = !toggle
+         if(!toggle){
+          searchdataApi()
+         }
         }" id="flexSwitchCheckDefault3" type="checkbox" />
         <label style="color: black" for="flexSwitchCheckDefault3">Manual Search</label>
       </div>
