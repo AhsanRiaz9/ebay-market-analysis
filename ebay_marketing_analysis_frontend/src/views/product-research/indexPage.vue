@@ -1,6 +1,5 @@
 <template>
   <div>
-    
     <div class="w-100 p-2 rounded-2 d-flex align-items-center px-4 main-head" style="background-color: white">
       <div class="w-25">
         <p class="platform">eBay</p>
@@ -126,7 +125,7 @@
         </div>
       </div>
 
-      <div class="form-check form-switch pl-0 custom-switch d-flex gap-2 align-items-center pt-3">
+      <div class="form-check form-switch  custom-switch d-flex gap-2 align-items-center p-3">
       <label style="color: black" for="flexSwitchCheckDefault3">Auto Search</label>
         <input style="height: 1.7em; width: 4em;" class="form-check-input m-0" v-model="toggle" @click="() => {
          toggle = !toggle
@@ -136,7 +135,7 @@
         }" id="flexSwitchCheckDefault3" type="checkbox" />
         <label style="color: black" for="flexSwitchCheckDefault3">Manual Search</label>
       </div>
-      <div v-if="toggle" class="d-flex"><button @click="manualSearch()" class="btn btn-primary ml-auto">Apply</button></div>
+      <div v-if="toggle" class="d-flex"><button @click="manualSearch()" :disabled="loading " class="btn btn-primary ml-auto">Apply</button></div>
 
 
 
@@ -347,7 +346,8 @@ export default {
     })
 
 function manualSearch () {
-searchdataApi() 
+  data.value.title = searchKeyword?.value?.trim()
+callproductsApi()
   
 }
     function handlelogout() {
@@ -390,17 +390,26 @@ searchdataApi()
       loading.value = true
       clearTimeout(timeeout)
       timeeout = setTimeout(() => {
-        if (!searchKeyword.value.startsWith(' ')) {
-          let filter = searchKeyword.value.trim()
+        console.log('its here')
+        if (!searchKeyword?.value?.startsWith(' ')) {
+          console.log('its here1')
+          let filter = searchKeyword?.value?.trim() || ''
           if (data.value.title != filter) {
             data.value.title = filter
             callproductsApi()
           }
+          else{
+            loading.value = false
+          }
         } else {
-          let filter = searchKeyword.value.trim()
-          if (data.value.title != filter) {
+          console.log('its here2')
+          let filter = searchKeyword?.value?.trim() || ''
+          if (data?.value?.title != filter) {
             data.value.title = filter
             callproductsApi()
+          }
+          else{
+            loading.value = false
           }
         }
       }, 1500)
@@ -456,7 +465,7 @@ searchdataApi()
         const response = await product_categories()
 
         if (response) {
-          category.value = response
+          category.value = response || []
         }
       }
       catch (err) {
@@ -630,6 +639,12 @@ searchdataApi()
 </script>
 
 <style scoped>
+
+
+.custom-switch{
+  background-color: #f1f1f2;
+}
+
 .skeleton {
   position: absolute;
   width: 100%;
