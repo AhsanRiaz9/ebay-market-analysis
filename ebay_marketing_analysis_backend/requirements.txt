@@ -18,3 +18,4 @@ celery[redis]
 drf_yasg
 slackclient
 undetected-chromedriver
+chromedriver_py
