@@ -95,7 +95,7 @@
             <h6 class="fw-semibold">Category</h6>
             <exclamation-circle-icon />
           </div>
-          <v-select class="selectinput" v-model="data.categories" label="Select category"  :items="category  ? category?.map(items => ({ name: items?.name || items?.name, id: items?.ebay_category_id || items?.ebay_category_id })) : []"
+          <v-select class="selectinput" v-model="data.categories" label="Select category"  :items="category && category.map(items => ({ name: items?.name ||'', id: items?.ebay_category_id || '' }))"
             item-title="name" item-value="id"
             variant="underlined" @update:modelValue=" !toggle && callproductsApi()"></v-select>
         </div>
@@ -120,7 +120,7 @@
             item-title="name" item-value="id" variant="underlined"></v-autocomplete>
           <v-autocomplete v-else-if="index == 'product_models' && data.categories" style="font-weight: 700;" multiple v-model="data[index]" @update:modelValue=" !toggle && callproductsApi()"
             class="selectinput" clearable :label="index?.charAt(0).toUpperCase() + index?.slice(1)"
-            :items="item && item?.map((items) => ({ name: items?.name || items?.value, id: items?.ebay_condition_id || items?.id }))"
+            :items="item && item?.map((items) => ({ name: items?.name || items?.value || '', id: items?.ebay_condition_id || items?.id || '' }))"
             item-title="name" item-value="id" variant="underlined"></v-autocomplete>
         </div>
       </div>
@@ -464,8 +464,8 @@ callproductsApi()
       try {
         const response = await product_categories()
 
-        if (response) {
-          category.value = response || []
+        if (response.name) {
+          category.value = response
         }
       }
       catch (err) {
