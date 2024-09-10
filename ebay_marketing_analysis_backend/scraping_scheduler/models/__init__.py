@@ -1,2 +1,3 @@
 from .scraping_process import ScrapingProcess, MobileScrapingProcess
 from .specific_product_process import SpecificProductProcess
+from .ebay_store_process import EbayStoreProcess

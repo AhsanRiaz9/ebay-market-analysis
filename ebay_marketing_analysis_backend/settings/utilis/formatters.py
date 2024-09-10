@@ -26,3 +26,12 @@ def format_number(number):
     if len(number_info) == 2:
         formated_number = f'{formated_number}.{fractional_part}' 
     return formated_number
+
+def format_info_value(value):
+    value = value.lower()
+    value = value.replace(',', '')
+    if 'k' in value:
+        value = float(value.split('k')[0]) * 1000
+    elif 'm' in value:
+        value = float(value.split('m')[0]) * 1000000
+    return int(value)

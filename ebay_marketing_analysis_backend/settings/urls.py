@@ -17,4 +17,6 @@ urlpatterns = [
     path('product_configuration/', include('product_configuration.urls')),
     path('ebay_products/', include('ebay_products.urls')),
     path('scraping_scheduler/', include('scraping_scheduler.urls')),
+    # competitor anaysis
+    path('competitor_analysis/', include('competitor_analysis.urls')),
 ]

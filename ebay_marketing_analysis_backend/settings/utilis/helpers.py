@@ -8,8 +8,6 @@ from settings.utilis.exceptions import NetworkException, WebDriverCloseException
 import undetected_chromedriver as uc
 import os
 import random
-from chromedriver_py import binary_path # this will get you the path variable
-
 
 class SeleniumWebDriver:
     def __init__(self, headless=True):
@@ -23,8 +21,7 @@ class SeleniumWebDriver:
         options.add_argument('--disable-dev-shm-usage')
         options.add_argument("--start-maximized")
         options.add_argument("--incognito")
-        svc = webdriver.ChromeService(executable_path=binary_path)
-        driver = webdriver.Chrome(service=svc, options=options)
+        driver = webdriver.Chrome(options=options)
         return driver
 
     @staticmethod
