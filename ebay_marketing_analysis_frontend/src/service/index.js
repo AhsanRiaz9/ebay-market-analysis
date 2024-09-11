@@ -94,7 +94,8 @@ else{
 }
 export const callProducts = async(value = 1, data=false)=>{
 const url = Urls.ebay_products
-return await fetch(url+value+'&'+ new URLSearchParams(data).toString(),{method:'GET'}).then((response) => response.json())
+const Token = getUserauth()
+return await fetch(url+value+'&'+ new URLSearchParams(data).toString(),{method:'GET',  headers: { Authorization: 'Bearer ' + Token }}).then((response) => response.json())
 }
 
 
@@ -110,10 +111,36 @@ export const tokenValidate = async () =>{
   return fetch(url,{method:"POST",headers:{'Content-Type':'Application/json',},body: JSON.stringify(Token)}).then(response => response.json() )
 }
 
-export const productFilters = async () =>{
+export const productFilters = async (params='9355/') =>{
   const url = Urls.productFilters
   const Token = getUserauth()
-  return fetch(url,{method:"GET", headers: { Authorization: 'Bearer ' + Token }}).then(response => response.json() )
+  return fetch(url+params,{method:"GET", headers: { Authorization: 'Bearer ' + Token }}).then(response => response.json() )
+}
+export const getUsersdata = async (data) =>{
+  const url = Urls.userDetail
+  const Token = getUserauth()
+  return fetch(url+data.id+'/',{method:"PUT", headers: { Authorization: 'Bearer ' + Token },body:JSON.stringify(data)}).then(response => response.json() )
+}
+export const scraping_info = async (data) =>{
+  const url = Urls.scraping_info
+  const Token = getUserauth()
+  const copy = {...data}
+  if(copy?.scraping_type == null){
+    copy.scraping_type = ''
+  }
+  return fetch(url,{method:"POST", headers: { Authorization: 'Bearer ' + Token, 'Content-Type':'Application/json' },body:JSON.stringify(copy)}).then(response => response.json())
+}
+
+export const product_processes = async (data = '') => {
+  const url = Urls.product_processes
+  const Token = getUserauth()
+  console.log(data)
+  return fetch(url + data,{ method: 'GET', headers: { Authorization: 'Bearer ' + Token } }).then((response) => response.json())
+}
+export const product_categories = async () => {
+  const url = Urls.product_categories
+  const Token = getUserauth()
+  return fetch(url, { method: 'GET', headers: { Authorization: 'Bearer ' + Token } }).then((response) => response.json())
 }
 
 
@@ -124,5 +151,4 @@ export const productFilters = async () =>{
 // if(dataCopy[x] == null){
 // dataCopy[x] = ''
 // }
-
 // function to perform conversion of null to empty string

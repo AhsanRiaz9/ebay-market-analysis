@@ -10,7 +10,7 @@ export default createStore({
     formData : [],
     permissions : null,
     role: null,
-    username: null
+    username: null,
   },
   getters: {
     shareOffcanvas: (state) => state.shareOffcanvas,
@@ -19,7 +19,7 @@ export default createStore({
     accesstoken : (state) =>  state.accesstoken,
     permissions : (state) => state.permissions,
     role : (state) => state.role,
-    username: (state)=> state.username
+    username: (state)=> state.username,
   },
   mutations: {
     openBottomCanvasCommit(state, payload) {
@@ -43,7 +43,7 @@ export default createStore({
     },
     handleusername: (state,payload)=>{
       state.username = payload
-    }
+    },
   },
   actions: {
     openBottomCanvasAction({ commit }, payload) {
