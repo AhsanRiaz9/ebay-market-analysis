@@ -9,6 +9,8 @@ class EbayStore(models.Model):
     items_sold = models.BigIntegerField()
     followers = models.BigIntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
-
+    ssn_code = models.CharField(max_length=50, default='')
+    category_param = models.CharField(max_length=50, default='store_cat')
+    
     def __str__(self):
         return f'{self.name} - {self.ebay_store_id}'

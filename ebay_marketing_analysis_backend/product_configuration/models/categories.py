@@ -2,7 +2,7 @@ from django.db import models
 
 class Category(models.Model):
     name = models.TextField()
-    ebay_category_id = models.IntegerField(unique=True, db_index=True)  
+    ebay_category_id = models.BigIntegerField(unique=True, db_index=True)  
     
     class Meta:
         indexes = [

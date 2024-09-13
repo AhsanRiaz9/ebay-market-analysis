@@ -110,3 +110,12 @@ def is_internet_available():
 def check_webdriver_close_exception(e):
     if 'no such window: target window already closed' in str(e):
         raise WebDriverCloseException('Web driver closed. Scraping stopped.')
+
+def extract_params_from_url(url):
+    params = {}
+    if '?' in url:
+        params_info = url.split('?')[1]
+        for param_detai in params_info.split('&'):
+            param_key, param_value = param_detai.split('=')
+            params[param_key] = param_value
+    return params
