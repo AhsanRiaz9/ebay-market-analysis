@@ -66,6 +66,7 @@ def create_encoded_url(url, params):
 
 def format_date(date_str):
     date_str = date_str.replace('SOLD  ', '')
+    date_str = date_str.replace('Sold ', '')
     date_info = date_str.split(' ')
     month_dict = {'jan': '01', 'feb': '02', 'mar': '03', 'apr': '04', 'may': '05', 'jun': '06', 'jul': '07', 'aug': '08', 'sep': '09', 'oct': '10', 'nov': '11', 'dec': '12'}
     day = date_info[0]

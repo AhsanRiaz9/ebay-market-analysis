@@ -35,3 +35,12 @@ def format_info_value(value):
     elif 'm' in value:
         value = float(value.split('m')[0]) * 1000000
     return int(value)
+
+def format_price(price):
+    price = str(price)
+    if '$' in price:
+        price = price.split(' to ')[0].replace('AU $', '').replace(',', '')
+        price = float(price)
+    else:
+        price = 0.0
+    return price
