@@ -132,6 +132,8 @@
          if(!toggle){
           searchdataApi()
          }
+         analytics = []
+         records = ''
         }" id="flexSwitchCheckDefault3" type="checkbox" />
         <label style="color: black" for="flexSwitchCheckDefault3">Manual Search</label>
       </div>
@@ -193,7 +195,7 @@
         <div class="d-flex gap-3">
           <div>
             <h5>{{ records }}</h5>
-            <p style="font-size: 11px; margin-top: 10px">Total active listing</p>
+            <p v-if="analytics" style="font-size: 11px; margin-top: 10px">Total active listing</p>
           </div>
         </div>
       </div>
@@ -249,7 +251,7 @@
         <div class="d-flex gap-3">
           <div>
             <h5>{{ records }}</h5>
-            <p style="font-size: 11px; margin-top: 6px;">Total sold listing</p>
+            <p v-if="analytics" style="font-size: 11px; margin-top: 6px;">Total sold listing</p>
           </div>
           <div>
             <h5>{{ analytics?.sell_through }}%</h5>
@@ -459,7 +461,6 @@ callproductsApi()
     }
 
     onMounted(async () => {
-
       route_Phrase.value = route.query.value
       try {
         const response = await product_categories()
