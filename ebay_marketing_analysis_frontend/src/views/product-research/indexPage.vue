@@ -249,7 +249,7 @@
         </div>
         <div class="vertical-line"></div>
         <div class="d-flex gap-3">
-          <div>
+          <div class=''>
             <h5>{{ records }}</h5>
             <p v-if="analytics" style="font-size: 11px; margin-top: 6px;">Total sold listing</p>
           </div>
@@ -464,8 +464,7 @@ callproductsApi()
       route_Phrase.value = route.query.value
       try {
         const response = await product_categories()
-
-        if (response.name) {
+        if (response) {
           category.value = response
         }
       }
