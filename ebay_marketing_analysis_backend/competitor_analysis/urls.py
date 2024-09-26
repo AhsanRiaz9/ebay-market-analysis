@@ -1,6 +1,6 @@
 from django.urls import path
-from competitor_analysis.views import DownloadEbayStoreView
+from competitor_analysis.views import DownloadEbayStoreAPIView, DownloadEbayStoreView
 
 urlpatterns = [
-    path('download_ebay_store/', DownloadEbayStoreView.as_view()),
+    path('download_ebay_store/', DownloadEbayStoreAPIView.as_view()),
 ]

@@ -18,7 +18,6 @@ class DownloadEbayStoreView(APIView):
     permission_classes = (AllowAny,)
     
     def post(self, *args, **kwargs):
-        url = 'https://www.ebay.com.au/str/originpc'
         params = self.request.data
         store_id = params.get('store_id', None)
         selenium_webdriver = None
